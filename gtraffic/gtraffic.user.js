@@ -16,8 +16,8 @@
 // @connect      cdn.gtraffic.io
 // @connect      gtraffic.io
 // @connect      *
-// @updateURL    https://github.com/longndev/VNBP/raw/refs/heads/main/Gaytraffic/gtraffic.user.js
-// @downloadURL  https://github.com/longndev/VNBP/raw/refs/heads/main/Gaytraffic/gtraffic.user.js
+// @updateURL    https://github.com/MinhTruk/test/raw/refs/heads/main/gtraffic/gtraffic.user.js
+// @downloadURL  https://github.com/MinhTruk/test/raw/refs/heads/main/gtraffic/gtraffic.user.js
 // @require      https://github.com/MinhTruk/test/blob/main/gtraffic/gtraffic.js
 // @run-at       document-end
 // ==/UserScript==
