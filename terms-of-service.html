@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#070a1c">
 <meta name="description" content="Điều khoản dịch vụ của SaveLab.">
 <title>Điều khoản dịch vụ – SaveLab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#070a1c;--ink:#eef1ff;--mut:#a9b2e0;--cy:#2ee6ff;--line:rgba(255,255,255,.12)}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -32,9 +33,44 @@ footer nav{display:flex;flex-wrap:wrap;gap:6px 18px}
 footer a{color:#cfd6ff;text-decoration:none;padding:6px 0;display:inline-block}
 footer a:hover{color:var(--cy)}
 @media (max-width:520px){.brand{display:none}.page{padding-top:14px}h2{margin-top:26px}}
+
+/* ===== animation chung (đồng bộ với Save Tool NSON/ES3) ===== */
+body{background-attachment:fixed}
+#fx{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.app,.wrap,.page{position:relative;z-index:2}
+@keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+@keyframes logoIn{from{opacity:0;transform:scale(.2) rotate(-200deg)}to{opacity:1;transform:rotate(-6deg)}}
+@keyframes bob{50%{transform:translateY(-6px)}}
+.back{position:relative;overflow:hidden;transition:transform .2s,background .2s,border-color .2s}
+.back:hover{transform:scale(1.06)}
+.back:active{transform:scale(.97)}
+.back::after{content:"";position:absolute;top:0;left:-70%;width:45%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);transform:skewX(-20deg);transition:left .7s;pointer-events:none}
+.back:hover::after{left:130%}
+#curtain{position:fixed;inset:0;z-index:99;pointer-events:none;display:grid;grid-template-columns:repeat(5,1fr)}
+#curtain i{background:linear-gradient(180deg,#8a5bff,#ff3da6);transform:scaleY(0);transform-origin:bottom;transition:transform .5s cubic-bezier(.7,0,.3,1)}
+#curtain.go i{transform:scaleY(1)}
+#curtain i:nth-child(2){transition-delay:.05s}#curtain i:nth-child(3){transition-delay:.1s}#curtain i:nth-child(4){transition-delay:.15s}#curtain i:nth-child(5){transition-delay:.2s}
+@media (max-width:620px),(hover:none) and (pointer:coarse){#fx{display:none}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.rv{opacity:1!important;transform:none!important}#curtain{display:none}}
+
+body{font-family:"Lexend","Segoe UI",Roboto,system-ui,sans-serif}
+.top{animation:rise .6s ease-out backwards}
+.brand{animation:rise .6s .1s ease-out backwards}
+h1{background:linear-gradient(180deg,#fff 10%,var(--cy) 70%,#ff3da6 150%);-webkit-background-clip:text;background-clip:text;color:transparent;animation:rise .7s .1s ease-out backwards}
+.date{animation:rise .7s .2s ease-out backwards}
+.rv{opacity:0;transform:translateY(20px);transition:opacity .6s ease-out,transform .6s ease-out}
+.rv.in{opacity:1;transform:none}
+h2{position:relative;padding-left:14px}
+h2::before{content:"";position:absolute;left:0;top:.18em;bottom:.18em;width:4px;border-radius:4px;background:linear-gradient(180deg,var(--cy),#ff3da6);transform:scaleY(0);transform-origin:top;transition:transform .5s .2s}
+h2.in::before{transform:scaleY(1)}
+.note{transition:opacity .6s ease-out,transform .25s,border-color .25s,background .25s}
+.note:hover{transform:translateY(-3px);border-color:var(--cy);background:rgba(46,230,255,.12)}
+footer a{transition:color .2s,transform .2s}
+footer a:hover{transform:translateY(-2px)}
 </style>
 </head>
 <body>
+<canvas id="fx"></canvas><div id="curtain"><i></i><i></i><i></i><i></i><i></i></div>
 <div class="page">
   <div class="top">
     <a class="back" href="index.html">← Trang chủ</a>
@@ -93,5 +129,54 @@ footer a:hover{color:var(--cy)}
   </footer>
 </div>
 <script>document.getElementById("y").textContent=new Date().getFullYear()</script>
+<script>
+(function(){
+  var lite=matchMedia('(max-width:620px),(hover:none) and (pointer:coarse)').matches;
+  var reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+  /* chuyển trang bằng rèm (về trang chủ, sang trang pháp lý...) */
+  var c=document.getElementById('curtain');
+  document.addEventListener('click',function(e){
+    var a=e.target.closest&&e.target.closest('a[href]');
+    if(!a||e.defaultPrevented||e.metaKey||e.ctrlKey||e.shiftKey||e.button)return;
+    var h=a.getAttribute('href');
+    if(!h||h.charAt(0)==='#'||/^(https?:|mailto:|tel:|blob:)/i.test(h)||a.target==='_blank'||a.hasAttribute('download'))return;
+    e.preventDefault();
+    if(reduce){location.href=h;return}
+    c.classList.add('go');
+    setTimeout(function(){location.href=h},650);
+  });
+  addEventListener('pageshow',function(){c.classList.remove('go')});
+
+  /* hiện dần khi cuộn (trang pháp lý) */
+  var items=document.querySelectorAll('.page>:not(.top)');
+  if(items.length){
+    items.forEach(function(el){el.classList.add('rv')});
+    if(lite||reduce||!('IntersectionObserver' in window)){items.forEach(function(el){el.classList.add('in')})}
+    else{
+      var io=new IntersectionObserver(function(es){es.forEach(function(e){
+        if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.08});
+      items.forEach(function(el){io.observe(el)});
+    }
+  }
+
+  /* nền hạt sáng nhẹ (chỉ desktop, dừng khi ẩn tab) */
+  if(lite||reduce)return;
+  var cv=document.getElementById('fx'),x=cv.getContext('2d'),W,H,P=[],run=false;
+  function size(){W=cv.width=innerWidth;H=cv.height=innerHeight;P=[];
+    for(var i=0;i<Math.min(28,W/40|0);i++)P.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.35,vy:(Math.random()-.5)*.35,r:Math.random()*1.8+.6,h:Math.random()*360})}
+  size();addEventListener('resize',size);
+  function loop(){
+    if(document.hidden){run=false;return}
+    x.clearRect(0,0,W,H);x.globalAlpha=.7;
+    for(var i=0;i<P.length;i++){var p=P[i];p.x+=p.vx;p.y+=p.vy;
+      if(p.x<0)p.x=W;if(p.x>W)p.x=0;if(p.y<0)p.y=H;if(p.y>H)p.y=0;
+      x.fillStyle='hsl('+p.h+',100%,72%)';x.beginPath();x.arc(p.x,p.y,p.r,0,7);x.fill()}
+    requestAnimationFrame(loop);
+  }
+  run=true;loop();
+  document.addEventListener('visibilitychange',function(){if(!document.hidden&&!run){run=true;loop()}});
+})();
+</script>
 </body>
 </html>
