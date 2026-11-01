@@ -2,7 +2,8 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#070a1c">
 <title>SaveLab – Bộ công cụ file save game</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -106,9 +107,57 @@ footer{margin-top:70px;text-align:center;color:var(--mut);font-size:.9rem}
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
   .card{opacity:1;transform:none}
 }
+
+/* ===== THANH TIẾN TRÌNH CUỘN (chỉ dùng transform → mượt, không gây layout) ===== */
+#progress{position:fixed;top:0;left:0;right:0;height:4px;z-index:100;pointer-events:none;
+  transform:scaleX(0);transform-origin:0 50%;will-change:transform;
+  background:linear-gradient(90deg,var(--cy),var(--vi),var(--mg),var(--am));
+  box-shadow:0 0 12px rgba(46,230,255,.6)}
+
+/* ===== HIỆN DẦN KHI CUỘN (reveal) ===== */
+.rv{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.8,.2,1)}
+.rv.in{opacity:1;transform:none}
+.title2{position:relative}
+.title2::after{content:"";display:block;width:70px;height:4px;margin:12px auto 0;border-radius:4px;
+  background:linear-gradient(90deg,var(--cy),var(--mg));transform:scaleX(0);transition:transform .8s .25s cubic-bezier(.2,.8,.2,1)}
+.title2.in::after{transform:scaleX(1)}
+
+/* ===== NÚT ĐIỀU KHOẢN / BẢO MẬT Ở FOOTER ===== */
+.f-links{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:18px}
+.f-btn{position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 20px;border-radius:99px;
+  color:#e3e7ff;text-decoration:none;font-weight:600;font-size:.85rem;
+  border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.05);
+  transition:transform .25s cubic-bezier(.2,.8,.2,1),border-color .25s,background .25s,box-shadow .25s}
+.f-btn::after{content:"";position:absolute;top:0;left:-70%;width:45%;height:100%;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);transform:skewX(-20deg);transition:left .6s}
+.f-btn:hover{transform:translateY(-3px);border-color:var(--cy);background:rgba(46,230,255,.1);box-shadow:0 10px 24px -10px rgba(46,230,255,.55)}
+.f-btn:hover::after{left:130%}
+.f-btn:active{transform:translateY(0) scale(.97)}
+.f-btn:focus-visible{outline:3px solid var(--cy);outline-offset:3px}
+.f-btn i{font-style:normal;transition:transform .25s}
+.f-btn:hover i{transform:translateX(3px)}
+.f-copy{margin-top:18px;font-size:.82rem;opacity:.85}
+
+/* ===== LÀM MƯỢT THÊM ===== */
+.card{transition:transform .25s ease,box-shadow .3s,border-color .3s}
+.art img{opacity:0;transition:transform .4s ease-out,opacity .5s ease}
+.art img.ld{opacity:1}
+.emblem::after{content:"";position:absolute;inset:8%;border-radius:50%;z-index:-1;pointer-events:none;
+  background:radial-gradient(circle,rgba(46,230,255,.28),transparent 68%);animation:glowp 5s ease-in-out infinite}
+@keyframes glowp{50%{transform:scale(1.12);opacity:.65}}
+@media (max-width:700px){.f-btn{flex:1 1 150px;justify-content:center}.emblem::after{animation:none}}
+@media (prefers-reduced-motion:reduce){.rv,.title2::after{opacity:1;transform:none}.art img{opacity:1}#progress{transition:none}}
+
+/* ===== CHẶN BÔI ĐEN / COPY / KÉO ẢNH ===== */
+html,body{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;-webkit-touch-callout:none}
+img,svg,canvas,a{-webkit-user-drag:none;user-drag:none}
+img{pointer-events:none;-webkit-touch-callout:none}
+::selection{background:transparent}
+::-moz-selection{background:transparent}
 </style>
 </head>
 <body>
+<div id="progress" aria-hidden="true"></div>
 <canvas id="fx"></canvas>
 <div id="blobs"></div>
 <div id="curtain"><i></i><i></i><i></i><i></i><i></i></div>
@@ -123,11 +172,17 @@ footer{margin-top:70px;text-align:center;color:var(--mut);font-size:.9rem}
     </div>
   </header>
 
-  <h2 class="title2">Chọn công cụ</h2>
+  <h2 class="title2 rv">Chọn công cụ</h2>
   <main class="grid" id="grid"></main>
 
-  <div class="marquee"><div id="mq"></div></div>
-  <footer>SaveLab · MinhTruk</footer>
+  <div class="marquee rv"><div id="mq"></div></div>
+  <footer class="rv">
+    <nav class="f-links" aria-label="Pháp lý">
+      <a class="f-btn" href="terms-of-service.html">Điều khoản dịch vụ <i aria-hidden="true">→</i></a>
+      <a class="f-btn" href="privacy-policy.html">Chính sách bảo mật <i aria-hidden="true">→</i></a>
+    </nav>
+    <div class="f-copy">© <span id="year"></span> SaveLab · MinhTruk</div>
+  </footer>
 </div>
 
 <script>
@@ -210,7 +265,7 @@ TOOLS.forEach((t,i)=>{
   const c=document.createElement("article");c.className="card";
   c.innerHTML=`
     <span class="tag ${on?"on":""}">${on?"Sẵn sàng":"Sắp ra mắt"}</span>
-    <div class="art"><img alt="${t.name}" src="${uri(artSVG(i*13+1,t.hue))}"></div>
+    <div class="art"><img alt="${t.name}" decoding="async" loading="lazy" src="${uri(artSVG(i*13+1,t.hue))}"></div>
     <h3>${t.name}</h3><p>${t.desc}</p>
     <a class="btn ${on?"":"soon"}" href="${t.href}">${on?"Mở công cụ":"Xem trước"}</a>
     <div class="glow"></div>`;
@@ -284,6 +339,49 @@ document.getElementById("mq").innerHTML=Array(8).fill("NSON · ES3 · RMMZ · SA
   }
   loop();
   document.addEventListener("visibilitychange",()=>{if(!document.hidden)loop()});
+})();
+
+/* ===== Năm ở footer ===== */
+document.getElementById("year").textContent=new Date().getFullYear();
+
+/* ===== Ảnh thẻ: hiện mượt khi tải xong ===== */
+document.querySelectorAll(".art img").forEach(im=>{
+  if(im.complete)im.classList.add("ld");else im.addEventListener("load",()=>im.classList.add("ld"),{once:true});
+});
+
+/* ===== Hiện dần các khối khi cuộn tới ===== */
+(function(){
+  const els=[...document.querySelectorAll(".rv")];
+  if(!("IntersectionObserver" in window)){els.forEach(e=>e.classList.add("in"));return}
+  const o=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("in");o.unobserve(e.target)}}),{threshold:.15});
+  els.forEach(e=>o.observe(e));
+})();
+
+/* ===== Thanh tiến trình cuộn trên đầu trang ===== */
+(function(){
+  const bar=document.getElementById("progress");let tick=false;
+  function upd(){
+    tick=false;
+    const max=document.documentElement.scrollHeight-innerHeight;
+    bar.style.transform="scaleX("+(max>0?Math.min(1,Math.max(0,scrollY/max)):0)+")";
+  }
+  function req(){if(!tick){tick=true;requestAnimationFrame(upd)}}
+  addEventListener("scroll",req,{passive:true});
+  addEventListener("resize",req);
+  addEventListener("load",req);
+  upd();
+})();
+
+/* ===== Chặn bôi đen, copy, chuột phải, kéo thả ảnh ===== */
+(function(){
+  const stop=e=>e.preventDefault();
+  ["selectstart","copy","cut","contextmenu","dragstart"].forEach(t=>document.addEventListener(t,stop,{capture:true}));
+  /* Ctrl/Cmd + C / X / A */
+  document.addEventListener("keydown",e=>{
+    if((e.ctrlKey||e.metaKey)&&["c","x","a"].includes(e.key.toLowerCase()))e.preventDefault();
+  },true);
+  /* nếu có vùng đang bị chọn thì bỏ chọn ngay */
+  document.addEventListener("selectionchange",()=>{const s=getSelection();if(s&&!s.isCollapsed)s.removeAllRanges()});
 })();
 </script>
 </body>
