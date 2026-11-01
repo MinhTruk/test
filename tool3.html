@@ -1,26 +1,186 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Công cụ 3 – SaveLab</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>RPG Maker Save Editor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;800&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#070a1c">
 <style>
-*{box-sizing:border-box;margin:0}
-body{min-height:100vh;display:grid;place-items:center;text-align:center;color:#eef1ff;font-family:"Lexend","Segoe UI",Roboto,system-ui,sans-serif;
-background:radial-gradient(900px 600px at 20% 0%,#1b1f5e,transparent 60%),radial-gradient(800px 600px at 100% 100%,#4a0f48,transparent 55%),#070a1c;overflow:hidden}
-.ring{width:140px;height:140px;margin:0 auto 26px;border-radius:50%;border:6px solid transparent;border-top-color:#2ee6ff;border-right-color:#ff3da6;animation:r 1.4s linear infinite;box-shadow:0 0 40px rgba(46,230,255,.4)}
-@keyframes r{to{transform:rotate(360deg)}}
-h1{font-size:clamp(2rem,6vw,3.6rem);animation:in .8s cubic-bezier(.2,1.4,.4,1) both}
-p{color:#9aa4d6;margin:12px 0 28px}
-a{display:inline-block;color:#fff;text-decoration:none;font-weight:800;padding:13px 28px;border-radius:14px;background:linear-gradient(110deg,#8a5bff,#ff3da6);transition:transform .2s}
-a:hover{transform:scale(1.07)}
-@keyframes in{from{opacity:0;transform:translateY(-40px) scale(.6)}}
+:root{--bg:#070a1c;--ink:#eef1ff;--mut:#9aa4d6;--cy:#2ee6ff;--mg:#ff3da6;--am:#ffc247;--vi:#8a5bff;
+  --line:rgba(255,255,255,.14);--panel:linear-gradient(160deg,rgba(255,255,255,.08),rgba(255,255,255,.025));--field:#080d20}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;min-height:100vh;overflow-x:hidden;color:var(--ink);
+  background:radial-gradient(1200px 800px at 20% -10%,#1b1f5e 0%,transparent 60%),radial-gradient(1000px 700px at 100% 10%,#4a0f48 0%,transparent 55%),var(--bg);
+  font:14px/1.55 "Lexend","Segoe UI",Roboto,system-ui,sans-serif}
+button,input,textarea{font:inherit}button{cursor:pointer}
+a:focus-visible,.btn:focus-visible,.nav:focus-visible{outline:3px solid var(--cy);outline-offset:2px}
+
+/* khung trang */
+.app,.wrap{max-width:1280px;margin:0 auto;padding:22px max(18px,env(safe-area-inset-right)) calc(28px + env(safe-area-inset-bottom)) max(18px,env(safe-area-inset-left))}
+.top,.head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:22px}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.logo{flex:none;width:44px;height:44px;border-radius:14px;display:grid;place-items:center;font-size:20px;font-weight:900;color:#0c1024;
+  background:linear-gradient(135deg,var(--cy),#b6a1ff 55%,var(--mg));transform:rotate(-6deg);box-shadow:0 7px 22px rgba(103,210,255,.22)}
+.brand h1{margin:0;font-size:1.05rem;font-weight:800;letter-spacing:.02em}
+.brand p{margin:2px 0 0;color:var(--mut);font-size:.72rem}
+.top-r{display:flex;align-items:center;gap:10px;flex:none}
+.pill,.tag{border:1px solid var(--line);color:var(--mut);padding:8px 12px;border-radius:99px;font-size:.68rem;letter-spacing:.06em;white-space:nowrap}
+.back{display:inline-flex;align-items:center;min-height:42px;padding:0 16px;border-radius:99px;color:#e5e7ff;text-decoration:none;font-weight:600;font-size:.8rem;
+  border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.05);transition:background .2s,border-color .2s}
+.back:hover{background:rgba(46,230,255,.12);border-color:var(--cy)}
+
+.layout,.grid{display:grid;grid-template-columns:250px minmax(0,1fr);gap:18px;align-items:start}
+.side,.main,.drop,.stat,.notice,.file,.filebar{background:var(--panel);border:1px solid var(--line);border-radius:20px}
+.side{padding:14px;position:sticky;top:16px}
+.side-title,.side>h3{margin:0;padding:8px 10px;font-size:.62rem;font-weight:700;letter-spacing:.18em;color:var(--mut)}
+.nav{display:flex;align-items:center;gap:10px;width:100%;margin:2px 0;padding:12px;border:0;border-radius:12px;background:transparent;color:#b7bfe6;text-align:left;
+  transition:background .2s,color .2s}
+.nav:hover{background:rgba(255,255,255,.07);color:#fff}
+.nav.active{background:rgba(46,230,255,.1);color:#fff;box-shadow:inset 3px 0 var(--cy)}
+.nav .ico{width:22px;text-align:center}
+.side-foot{margin-top:14px;padding:13px 9px 4px;border-top:1px solid var(--line);color:var(--mut);font-size:.68rem}
+
+.main{padding:24px;min-height:680px;animation:fade .45s ease both}
+.welcome,.title{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+.welcome h2,.title h2{margin:0 0 4px;font-size:1.45rem;font-weight:800}
+.sub,.muted{color:var(--mut)}.sub{margin:0}
+
+/* nút */
+.btn{min-height:42px;padding:10px 16px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.06);color:var(--ink);font-weight:600;font-size:.85rem;
+  transition:transform .15s,border-color .2s,background .2s,filter .2s}
+.btn:hover{border-color:var(--cy);background:rgba(46,230,255,.1)}
+.btn:active{transform:scale(.97)}
+.btn.primary{border:0;color:#fff;font-weight:800;background:linear-gradient(110deg,var(--vi),var(--mg) 55%,var(--am))}
+.btn.primary:hover{filter:brightness(1.12)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none;filter:none}
+
+/* vùng thả file */
+.drop{margin:20px 0;padding:28px 16px;text-align:center;border:1px dashed rgba(46,230,255,.4);background:rgba(46,230,255,.04);transition:border-color .2s,background .2s}
+.drop.drag{border-color:var(--mg);background:rgba(255,61,166,.08)}
+.drop .big,.drop .symbol{font-size:2rem;line-height:1.2;color:var(--cy)}
+.drop h3{margin:8px 0 4px;font-size:1.05rem}
+.drop p{margin:0 0 14px;color:var(--mut)}
+.filebar,.file{display:none;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;margin:14px 0;border-radius:16px}
+.filebar.show,.file.show{display:flex}
+.filemeta{min-width:0}.filemeta strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.file strong{display:block;overflow-wrap:anywhere}
+.filemeta small,.file small{color:var(--mut)}
+
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}
+.stat{padding:13px 15px;border-radius:16px}
+.stat small{color:var(--mut)}
+.stat strong,.stat b{display:block;margin-top:3px;font-size:1.05rem;overflow-wrap:anywhere}
+
+.notice{padding:12px 14px;margin:14px 0;border-radius:14px;font-size:.8rem;color:#cdd3f5}
+.notice.warn{border-color:rgba(255,194,71,.4);background:rgba(255,194,71,.08);color:#ffe3a6}
+.notice.good{border-color:rgba(61,255,176,.4);background:rgba(61,255,176,.08);color:#b6ffe0}
+
+/* tab nội dung */
+.section,.pane{display:none}
+.section.active,.pane.active{display:block;animation:fade .3s ease both}
+.section h2,.pane h3{margin:0 0 4px;font-size:1.2rem;font-weight:800}
+.section .desc{margin:0 0 16px;color:var(--mut)}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0}
+.search,.input,td input,.raw{background:var(--field);border:1px solid rgba(255,255,255,.16);border-radius:10px;color:var(--ink);padding:9px 12px;outline:none;transition:border-color .2s}
+.search,.input{min-width:220px}
+.search:focus,.input:focus,td input:focus,.raw:focus{border-color:var(--cy)}
+.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:14px}
+table{width:100%;border-collapse:collapse;min-width:520px}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid rgba(255,255,255,.08)}
+th{background:rgba(255,255,255,.05);color:var(--mut);font-size:.68rem;text-transform:uppercase;letter-spacing:.08em}
+td input{width:100%;min-width:80px;padding:7px 9px}
+.empty{padding:28px;text-align:center;color:var(--mut)}
+.raw{width:100%;min-height:420px;padding:14px;border-radius:14px;background:var(--field);color:#cfe0ff;font:12px/1.6 ui-monospace,Consolas,monospace;resize:vertical}
+.hex{white-space:pre-wrap;word-break:break-all;max-height:420px;overflow:auto;padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--field);color:#a9d9ff;font:12px/1.7 ui-monospace,Consolas,monospace}
+.tree{max-height:540px;overflow:auto;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--field)}
+.leaf{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:4px 0}
+.leaf .muted{font-family:ui-monospace,Consolas,monospace;font-size:.75rem}
+.type{padding:1px 7px;border:1px solid rgba(138,91,255,.55);border-radius:10px;color:#c9baff;font-size:10px}
+.value{color:#dfe6ff;overflow-wrap:anywhere}
+
+.footer{margin:28px 0 4px;text-align:center;color:#7e86ad;font-size:.75rem}
+.f-links{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 18px;margin-top:8px}
+.f-links a{padding:6px 2px;color:#cfd6ff;text-decoration:none}
+.f-links a:hover{color:var(--cy)}
+
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+@media (max-width:800px){
+  .app,.wrap{padding:14px max(12px,env(safe-area-inset-right)) calc(20px + env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left))}
+  .layout,.grid{grid-template-columns:1fr}
+  .side{position:static;display:flex;gap:4px;padding:8px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .side-title,.side>h3,.side-foot{display:none}
+  .nav{width:auto;flex:none;white-space:nowrap;padding:10px 14px}
+  .nav .ico{display:none}
+  .nav.active{box-shadow:inset 0 -3px var(--cy)}
+  .main{padding:16px;min-height:0;border-radius:18px}
+  .stats{grid-template-columns:1fr 1fr}
+  .pill,.tag,.brand p{display:none}
+  .welcome h2,.title h2{font-size:1.25rem}
+  .search,.input{min-width:0;flex:1 1 100%}
+  input,textarea,.search,.input{font-size:16px}
+  .raw{min-height:300px}
+}
+@media (max-width:420px){.stats{grid-template-columns:1fr}.filebar,.file{flex-direction:column;align-items:stretch}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
-<body>
-<div><div class="ring"></div><h1>Công cụ 3</h1><p>Trang này đang chờ nội dung. Sẽ cập nhật sau.</p><a href="index.html">Về trang chủ</a></div>
-</body>
-</html>
+<body><div class="app">
+<header class="top"><div class="brand"><div class="logo">◆</div><div><h1>RPG Maker Save Editor</h1><p>Local save inspector · Không tải file lên máy chủ</p></div></div><div class="top-r"><span class="pill">BẢN ĐỘC LẬP · HTML</span><a class="back" href="index.html">← SaveLab</a></div></header>
+<div class="layout">
+<aside class="side"><div class="side-title">SAVE WORKSPACE</div>
+<button class="nav active" data-tab="overview"><span class="ico">▦</span>Tổng quan</button>
+<button class="nav" data-tab="actors"><span class="ico">♟</span>Nhân vật</button>
+<button class="nav" data-tab="inventory"><span class="ico">▣</span>Túi đồ</button>
+<button class="nav" data-tab="switches"><span class="ico">◉</span>Switches</button>
+<button class="nav" data-tab="variables"><span class="ico">⌗</span>Variables</button>
+<button class="nav" data-tab="raw"><span class="ico">⌘</span>Dữ liệu thô</button>
+<div class="side-foot">Hỗ trợ nhận diện: RXDATA · RVDATA · RVDATA2 · RPGSAVE</div></aside>
+<main class="main">
+<div class="welcome"><div><h2 id="pageTitle">Trình chỉnh sửa Save</h2><p class="sub" id="pageSub">Mở file RPG Maker để bắt đầu phân tích dữ liệu.</p></div><button class="btn primary" id="openBtn">＋ Mở file</button></div>
+<div class="drop" id="drop"><div class="big">⇧</div><h3>Kéo thả file save vào đây</h3><p>Hoặc chọn file từ thiết bị của bạn</p><button class="btn" id="chooseBtn">Chọn file</button><input id="fileInput" type="file" accept=".rxdata,.rvdata,.rvdata2,.rpgsave" hidden></div>
+<div class="filebar" id="filebar"><div class="filemeta"><strong id="fileName">—</strong><small id="fileInfo">—</small></div><div style="display:flex;gap:7px"><button class="btn" id="resetBtn">Đóng file</button><button class="btn primary" id="downloadBtn" disabled>Tải xuống</button></div></div>
+<div class="stats"><div class="stat"><small>Định dạng</small><strong id="formatStat">Chưa mở</strong></div><div class="stat"><small>Dung lượng</small><strong id="sizeStat">—</strong></div><div class="stat"><small>Trạng thái</small><strong id="statusStat">Chờ file</strong></div></div>
+<div class="notice" id="notice">🔒 File được xử lý ngay trong trình duyệt. Hãy giữ một bản sao lưu trước khi chỉnh sửa save gốc.</div>
+<section class="section active" id="sec-overview"><h2>Tổng quan save</h2><p class="desc">Thông tin cơ bản và các nhóm dữ liệu được tìm thấy.</p><div id="overviewContent" class="empty">Chưa có dữ liệu. Hãy mở một file save.</div></section>
+<section class="section" id="sec-actors"><h2>Nhân vật</h2><p class="desc">Thông tin actor được trích xuất từ save.</p><div id="actorsContent" class="empty">Chưa có dữ liệu.</div></section>
+<section class="section" id="sec-inventory"><h2>Túi đồ</h2><p class="desc">Vật phẩm, vũ khí và giáp được lưu trong party.</p><div id="inventoryContent" class="empty">Chưa có dữ liệu.</div></section>
+<section class="section" id="sec-switches"><h2>Switches</h2><p class="desc">Các cờ sự kiện dạng bật/tắt.</p><div id="switchesContent" class="empty">Chưa có dữ liệu.</div></section>
+<section class="section" id="sec-variables"><h2>Variables</h2><p class="desc">Các biến được lưu trong game.</p><div id="variablesContent" class="empty">Chưa có dữ liệu.</div></section>
+<section class="section" id="sec-raw"><h2>Dữ liệu thô</h2><p class="desc">Xem JSON đã giải mã. Chỉnh sửa tại đây chỉ áp dụng cho định dạng RPG Maker MV (.rpgsave) trong bản này.</p><textarea id="rawData" class="raw" spellcheck="false" placeholder="Dữ liệu sẽ xuất hiện ở đây..."></textarea><div class="toolbar"><button class="btn" id="applyRaw">Áp dụng JSON</button><span id="rawStatus" class="sub"></span></div><div id="hexWrap" style="display:none"><h3>Hex preview · Ruby Marshal</h3><div class="hex" id="hexPreview"></div></div></section>
+<div class="footer">RPG Maker Save Editor · Xử lý cục bộ · Luôn sao lưu save trước khi chỉnh sửa<nav class="f-links" aria-label="Pháp lý"><a href="index.html">Trang chủ</a><a href="terms-of-service.html">Điều khoản dịch vụ</a><a href="privacy-policy.html">Chính sách bảo mật</a></nav></div>
+</main></div></div>
+<script src="https://cdn.jsdelivr.net/npm/lz-string@1.5.0/libs/lz-string.min.js"></script>
+<script>
+(()=>{'use strict';
+let file=null, original=null, data=null, format='', dirty=false;
+const $=id=>document.getElementById(id);
+const navs=[...document.querySelectorAll('.nav')];
+navs.forEach(b=>b.addEventListener('click',()=>{navs.forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.section').forEach(s=>s.classList.toggle('active',s.id==='sec-'+b.dataset.tab));$('pageTitle').textContent=b.textContent.trim();$('pageSub').textContent=({overview:'Thông tin cơ bản và trạng thái file.',actors:'Thông tin nhân vật.',inventory:'Vật phẩm, vũ khí và giáp.',switches:'Cờ sự kiện bật/tắt.',variables:'Các biến trong game.',raw:'Dữ liệu đã giải mã và vùng dữ liệu nhị phân.'})[b.dataset.tab]}));
+function notice(t,kind=''){ $('notice').className='notice '+kind; $('notice').textContent=t }
+function size(n){return n<1024?n+' B':(n/1024).toFixed(1)+' KB'}
+function detect(name,bytes){let ext=(name.split('.').pop()||'').toLowerCase();if(['rxdata','rvdata','rvdata2','rpgsave'].includes(ext))return ext;let s=new TextDecoder().decode(bytes.slice(0,80));if(s.trim().startsWith('{'))return 'json';return 'unknown'}
+$('openBtn').onclick=$('chooseBtn').onclick=()=>$('fileInput').click();
+$('fileInput').onchange=e=>{if(e.target.files[0])load(e.target.files[0]);e.target.value=''};
+const drop=$('drop');['dragenter','dragover'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('drag')}));['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('drag')}));drop.addEventListener('drop',e=>{let f=e.dataTransfer.files[0];if(f)load(f)});
+async function load(f){file=f;original=new Uint8Array(await f.arrayBuffer());format=detect(f.name,original);data=null;dirty=false;$('filebar').classList.add('show');$('fileName').textContent=f.name;$('fileInfo').textContent=size(f.size)+' · '+new Date(f.lastModified).toLocaleString('vi-VN');$('formatStat').textContent='.'+format;$('sizeStat').textContent=size(f.size);$('statusStat').textContent='Đã nạp';$('downloadBtn').disabled=true;$('hexWrap').style.display='none';
+if(format==='rpgsave'){try{if(!window.LZString)throw Error('Không tải được thư viện LZString. Hãy kết nối Internet rồi tải lại trang.');let encoded=new TextDecoder().decode(original).trim();let decoded=LZString.decompressFromBase64(encoded);if(!decoded)throw Error('Không giải nén được. File có thể dùng codec riêng hoặc đã bị hỏng.');data=JSON.parse(decoded);$('rawData').value=JSON.stringify(data,null,2);renderAll();$('statusStat').textContent='Đã giải mã';$('downloadBtn').disabled=false;notice('✓ Đã giải mã RPG Maker MV (.rpgsave). Có thể chỉnh dữ liệu ở các mục bên trái hoặc trong Dữ liệu thô.','good')}
+catch(err){notice('Không thể đọc file .rpgsave: '+err.message,'warn');$('overviewContent').textContent='Giải mã thất bại.'}}
+else if(['rxdata','rvdata','rvdata2'].includes(format)){let head=Array.from(original.slice(0,48)).map(b=>b.toString(16).padStart(2,'0')).join(' ');$('hexPreview').textContent=head+'\\n\\n'+Array.from(original.slice(48,256)).map(b=>b.toString(16).padStart(2,'0')).join(' ');$('hexWrap').style.display='block';$('overviewContent').innerHTML='<div class="notice warn">Đã nhận diện Ruby Marshal / RGSS. Bản HTML này hiện chỉ nhận diện và xem byte đầu file; chưa có bộ giải tuần tự hóa Ruby Marshal an toàn để chỉnh sửa rồi đóng gói lại.</div><p><b>Định dạng:</b> '+format.toUpperCase()+'</p><p><b>Magic bytes:</b> '+head+'</p><p><b>Kích thước:</b> '+size(original.length)+'</p>';$('statusStat').textContent='Nhận diện';$('downloadBtn').disabled=true;notice('⚠ File Ruby Marshal đã được nhận diện, nhưng chưa hỗ trợ chỉnh sửa/ghi lại. Không xuất file giả hoặc ghi đè dữ liệu để tránh làm hỏng save.','warn')}
+else notice('Định dạng chưa được hỗ trợ.','warn');
+}
+function obj(x){return x&&typeof x==='object'&&!Array.isArray(x)}
+function findRoot(){return data&&data;}
+function renderAll(){if(!data)return;let keys=Object.keys(data);$('overviewContent').innerHTML='<div class="stats"><div class="stat"><small>Nhóm dữ liệu cấp cao</small><strong>'+keys.length+'</strong></div><div class="stat"><small>Party</small><strong>'+(data.party?'Có':'Không thấy')+'</strong></div><div class="stat"><small>Actors</small><strong>'+(data.actors?'Có':'Không thấy')+'</strong></div></div><div class="tablewrap"><table><thead><tr><th>Nhóm</th><th>Kiểu dữ liệu</th><th>Số phần tử / thuộc tính</th></tr></thead><tbody>'+keys.map(k=>'<tr><td>'+esc(k)+'</td><td>'+typeof data[k]+'</td><td>'+(data[k]&&typeof data[k]==='object'?Object.keys(data[k]).length:'—')+'</td></tr>').join('')+'</tbody></table></div>';
+renderActors();renderInventory();renderMap('switchesContent',data.switches,'Switch');renderMap('variablesContent',data.variables,'Variable')}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function renderActors(){let a=data.actors;if(!a){$('actorsContent').textContent='Không tìm thấy nhóm actors trong save.';return}let arr=Array.isArray(a)?a:Object.entries(a).map(([id,v])=>({id,...(obj(v)?v:{value:v})}));$('actorsContent').innerHTML=makeTable(arr.map((v,i)=>({ID:v.id??i,Name:v._name??v.name??v._nickname??'(chưa có tên)',Level:v._level??v.level??'—',HP:v._hp??v.hp??'—',MP:v._mp??v.mp??'—'})))}
+function renderInventory(){let p=data.party;if(!p){$('inventoryContent').textContent='Không tìm thấy party.';return}let groups=[['_items','Vật phẩm'],['_weapons','Vũ khí'],['_armors','Giáp']];let rows=[];groups.forEach(([k,label])=>{let g=p[k];if(g&&obj(g))Object.entries(g).forEach(([id,n])=>rows.push({Loại:label,ID:id,Số_lượng:n}))});$('inventoryContent').innerHTML=rows.length?makeTable(rows):'<div class="empty">Không thấy túi đồ hoặc chưa có vật phẩm.</div>'}
+function renderMap(id,value,label){if(!value){$(id).textContent='Không tìm thấy dữ liệu '+label.toLowerCase()+'.';return}let rows=Array.isArray(value)?value.map((v,i)=>({ID:i,Value:v})):Object.entries(value).map(([k,v])=>({ID:k,Value:v}));$(id).innerHTML=makeTable(rows)}
+function makeTable(rows){if(!rows.length)return '<div class="empty">Không có dữ liệu.</div>';let cols=Object.keys(rows[0]);return '<div class="tablewrap"><table><thead><tr>'+cols.map(c=>'<th>'+esc(c)+'</th>').join('')+'</tr></thead><tbody>'+rows.map((r,i)=>'<tr>'+cols.map(c=>'<td><input data-row="'+i+'" data-key="'+esc(c)+'" value="'+esc(r[c]??'')+'"></td>').join('')+'</tr>').join('')+'</tbody></table></div><p class="sub" style="padding:8px">Bảng trên là bản xem nhanh; dùng mục Dữ liệu thô để chỉnh sửa đầy đủ.</p>'}
+$('applyRaw').onclick=()=>{try{let next=JSON.parse($('rawData').value);if(!obj(next))throw Error('Save root phải là object JSON.');data=next;dirty=true;renderAll();$('downloadBtn').disabled=false;$('rawStatus').textContent='Đã áp dụng thay đổi.';notice('Đã cập nhật dữ liệu trong bộ nhớ. Hãy tải xuống để tạo save mới.','good')}catch(e){$('rawStatus').textContent='JSON lỗi: '+e.message}};
+$('downloadBtn').onclick=()=>{if(!data||format!=='rpgsave')return;try{let packed=LZString.compressToBase64(JSON.stringify(data));let blob=new Blob([packed],{type:'application/octet-stream'});let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=file.name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);notice('Đã tạo file .rpgsave mới. Hãy thử bằng bản sao của save trong game trước khi thay file gốc.','good')}catch(e){notice('Xuất file thất bại: '+e.message,'warn')}};
+$('resetBtn').onclick=()=>{file=original=data=null;format='';$('filebar').classList.remove('show');$('formatStat').textContent='Chưa mở';$('sizeStat').textContent='—';$('statusStat').textContent='Chờ file';$('downloadBtn').disabled=true;$('overviewContent').textContent='Chưa có dữ liệu.';$('rawData').value='';notice('Đã đóng file. Hãy mở save khác hoặc chọn lại file.');};
+})();
+</script></body></html>
