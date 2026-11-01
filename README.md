@@ -97,7 +97,7 @@ Sau khi hoàn tất, kiểm tra dữ liệu đầu ra và lưu lại theo hướ
 ```text
 SAVE-LAB/
 │
-├── index1.html
+├── index.html
 │
 ├── Save_Tool_NSON_ES3.html
 ├── savelab_rmmz.html
@@ -110,7 +110,7 @@ SAVE-LAB/
 
 | Tệp | Mô tả |
 |---|---|
-| `index1.html` | Trang chủ, nơi truy cập các công cụ |
+| `index.html` | Trang chủ, nơi truy cập các công cụ |
 | `Save_Tool_NSON_ES3.html` | Công cụ NSON / ES3 Decrypter |
 | `savelab_rmmz.html` | Công cụ RMMZ Decrypter |
 | `tos.html` | Điều khoản sử dụng |
