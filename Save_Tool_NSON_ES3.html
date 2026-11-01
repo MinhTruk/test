@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Save Tool | NSON + ES3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#070a1c;--ink:#eef1ff;--mut:#9aa4d6;--cy:#2ee6ff;--mg:#ff3da6;--am:#ffc247;--vi:#8a5bff;--ok:#3dffb0;--bad:#ff6b8b;--line:rgba(255,255,255,.14);--field:#080d22;--glass:linear-gradient(160deg,rgba(255,255,255,.09),rgba(255,255,255,.025));--grad:linear-gradient(110deg,var(--vi),var(--mg) 55%,var(--am))}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;min-height:100vh;color:var(--ink);font-family:"Lexend","Segoe UI",Roboto,system-ui,sans-serif;font-size:15px;line-height:1.5;
+  background:radial-gradient(1200px 800px at 20% -10%,#1b1f5e 0%,transparent 60%),radial-gradient(1000px 700px at 100% 10%,#4a0f48 0%,transparent 55%),var(--bg);background-attachment:fixed}
+#fx{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.topbar{position:relative;z-index:3;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px clamp(16px,4vw,40px)}
+.brand{display:flex;align-items:center;gap:12px;font-weight:900;font-size:1.25rem;letter-spacing:-.01em}
+.brand img{width:40px;height:40px;border-radius:50%;display:block}
+.home{position:relative;overflow:hidden;color:var(--ink);text-decoration:none;font-weight:800;padding:9px 18px;border-radius:99px;border:1px solid var(--line);background:rgba(255,255,255,.06);transition:transform .2s,border-color .2s}
+.home:hover{transform:scale(1.05);border-color:var(--cy)}
+.home:focus-visible,button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid var(--cy);outline-offset:3px}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer;color:var(--ink);border:1px solid var(--line);background:rgba(255,255,255,.07);border-radius:12px;padding:10px 15px;font-weight:700;transition:transform .2s,border-color .2s,background .2s}
+button:hover{border-color:var(--cy);transform:translateY(-1px)}
+button:active{transform:scale(.97)}
+button:disabled{opacity:.4;cursor:not-allowed}
+button:disabled:hover{transform:none;border-color:var(--line)}
+button.primary,button.green{position:relative;overflow:hidden;border:0;color:#fff;font-weight:800;background:var(--grad)}
+button.green{background:linear-gradient(110deg,#0f9d78,#2ee6ff)}
+button.primary::after,button.green::after{content:"";position:absolute;top:0;left:-70%;width:45%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.6),transparent);transform:skewX(-20deg);transition:left .7s;pointer-events:none}
+button.primary:hover::after,button.green:hover::after{left:130%}
+button.primary:disabled::after{display:none}
+input[type=text],input[type=password],input:not([type]),select,textarea{background:var(--field);color:var(--ink);border:1px solid var(--line);border-radius:12px;outline:none;transition:border-color .2s,box-shadow .2s}
+input:focus,select:focus,textarea:focus{border-color:var(--cy);box-shadow:0 0 0 3px rgba(46,230,255,.18)}
+.panel{background:var(--glass);border:1px solid var(--line);border-radius:22px;box-shadow:0 20px 50px -20px rgba(0,0,0,.7)}
+.gtext{background:linear-gradient(180deg,#fff 10%,var(--cy) 60%,var(--mg) 120%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.rise{opacity:0;animation:rise .6s ease-out forwards}
+@keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+#curtain{position:fixed;inset:0;z-index:99;pointer-events:none;display:grid;grid-template-columns:repeat(5,1fr)}
+#curtain i{background:linear-gradient(180deg,var(--vi),var(--mg));transform:scaleY(0);transform-origin:bottom;transition:transform .5s cubic-bezier(.7,0,.3,1)}
+#curtain.go i{transform:scaleY(1)}
+#curtain i:nth-child(2){transition-delay:.05s}#curtain i:nth-child(3){transition-delay:.1s}#curtain i:nth-child(4){transition-delay:.15s}#curtain i:nth-child(5){transition-delay:.2s}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}.rise{opacity:1}}
+
+main{position:relative;z-index:2;max-width:1000px;margin:auto;padding:6px 16px 60px}
+header.head{margin:8px 0 22px}
+h1{font-size:clamp(2.2rem,7vw,3.8rem);line-height:1.05;letter-spacing:-.02em;font-weight:900;margin:0 0 8px}
+.subtitle{color:var(--mut);margin:0}
+.panel{padding:22px;margin:16px 0}
+.panel:nth-of-type(1){animation-delay:.05s}.panel:nth-of-type(2){animation-delay:.15s}.panel:nth-of-type(3){animation-delay:.25s}
+.panel-title{font-weight:800;font-size:1.1rem;margin:0 0 14px}
+.drop{display:block;border:1.5px dashed rgba(255,255,255,.3);border-radius:18px;padding:26px 16px;text-align:center;background:rgba(255,255,255,.03);cursor:pointer;transition:border-color .2s,background .2s,transform .2s}
+.drop:hover,.drop.drag{border-color:var(--cy);background:rgba(46,230,255,.08)}
+.drop.drag{transform:scale(1.01)}
+.drop img{display:block;width:72px;height:72px;border-radius:50%;margin:0 auto 12px}
+.drop strong{display:block;font-size:1.1rem;margin-bottom:4px}
+.drop small,.muted,.note{color:var(--mut)}
+input[type=file]{display:none}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;color:var(--mut);font-size:13px}
+.pill{border:1px solid var(--line);padding:4px 11px;border-radius:99px;background:rgba(255,255,255,.04)}
+label{display:block;font-weight:700;margin-bottom:7px}
+input[type=password],input[type=text],select{width:100%;padding:11px 13px}
+select option{background:#0d1230}
+.field{flex:1;min-width:180px}
+textarea{width:100%;min-height:390px;resize:vertical;padding:16px;color:#d6e6ff;font:13px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace}
+.status{margin-top:14px;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--mut);white-space:pre-wrap;overflow-wrap:anywhere}
+.status.ok{color:var(--ok);border-color:rgba(61,255,176,.35)}
+.status.err{color:var(--bad);border-color:rgba(255,107,139,.4)}
+.status.warn{color:var(--am);border-color:rgba(255,194,71,.4)}
+.options{display:flex;gap:18px;flex-wrap:wrap;margin-top:14px}
+.check{display:flex;gap:8px;align-items:center;color:var(--mut);font-weight:500;margin:0}
+.check input{accent-color:var(--cy)}
+.note{font-size:12.5px;margin:14px 0 0}
+.hidden{display:none!important}
+@media(max-width:620px){.panel{padding:16px}textarea{min-height:300px}.row button{flex:1}}
+</style>
+</head>
+<body>
+<canvas id="fx"></canvas>
+<div id="curtain"><i></i><i></i><i></i><i></i><i></i></div>
+<div class="topbar rise"><div class="brand"><img data-art="77,200,120,120" width="40" height="40" alt=""><span>SaveLab</span></div><a class="home" href="index.html">Trang chủ</a></div>
+<main>
+<header class="head rise" style="animation-delay:.02s">
+  <h1 class="gtext">Save Tool</h1>
+  <p class="subtitle">Naninovel NSON + Unity Easy Save 3 · Xử lý cục bộ trên trình duyệt</p>
+</header>
+
+<section class="panel rise">
+  <p class="panel-title">1. Chọn save file</p>
+  <label class="drop" id="drop">
+    <img data-art="11,190,160,160" width="72" height="72" alt="">
+    <strong>Thả file vào đây hoặc nhấn để chọn</strong>
+    <small>Hỗ trợ .nson · .es3 · .json · .txt</small>
+    <input id="file" type="file" accept=".nson,.es3,.json,.txt,application/json,text/plain,application/octet-stream">
+  </label>
+  <div class="meta">
+    <span class="pill" id="filename">Chưa có file</span>
+    <span class="pill" id="filesize">0 bytes</span>
+    <span class="pill" id="filetype">Chưa xác định</span>
+  </div>
+</section>
+
+<section class="panel rise">
+  <p class="panel-title">2. Cài đặt định dạng</p>
+  <div class="row">
+    <div class="field">
+      <label for="format">Định dạng xuất</label>
+      <select id="format">
+        <option value="nson">NSON · Raw DEFLATE</option>
+        <option value="es3">ES3 · AES-CBC</option>
+      </select>
+    </div>
+    <div class="field" id="passwordWrap">
+      <label for="password">ES3 password</label>
+      <input id="password" type="password" value="mypassword" autocomplete="off">
+    </div>
+    <div class="field" id="keyWrap">
+      <label for="keySize">AES key size</label>
+      <select id="keySize">
+        <option value="128">AES-128 (mặc định)</option>
+        <option value="256">AES-256</option>
+      </select>
+    </div>
+  </div>
+  <div class="options" id="es3Options">
+    <label class="check"><input type="checkbox" id="gzip"> GZip compression (ES3)</label>
+    <label class="check"><input type="checkbox" id="showPassword"> Hiện password</label>
+  </div>
+  <p class="note">ES3 AES dùng IV 16 byte ở đầu file, PBKDF2-HMAC-SHA1 với salt = IV và 100 vòng lặp. Mật khẩu mặc định được điền theo hướng dẫn NTR Soccer ông đã cung cấp. Một số game có thể dùng cấu hình ES3 khác.</p>
+</section>
+
+<section class="panel rise">
+  <div class="row" style="justify-content:space-between;margin-bottom:12px">
+    <p class="panel-title" style="margin:0">3. Nội dung đã giải mã / nội dung cần mã hóa</p>
+    <span class="muted" id="count">0 ký tự</span>
+  </div>
+  <textarea id="editor" spellcheck="false" placeholder="Chọn file save để giải mã, hoặc dán JSON/TXT vào đây..."></textarea>
+  <div class="row" style="margin-top:14px">
+    <button class="primary" id="decrypt">Decrypt file</button>
+    <button class="green" id="encrypt">Encrypt &amp; tải file</button>
+    <button id="downloadText">Tải TXT</button>
+    <button id="downloadJson">Tải JSON</button>
+    <button id="clear">Xóa</button>
+  </div>
+  <div class="status" id="status" role="status">Sẵn sàng. Chọn file hoặc dán nội dung vào khung soạn thảo.</div>
+  <p class="note">Mẹo: chọn file .nson hoặc .es3 để tự chuyển định dạng. Với ES3, hãy giữ nguyên password và AES key size khi encrypt lại. Công cụ không gửi file lên mạng.</p>
+</section>
+</main>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const fileInput = $('file'), editor = $('editor'), status = $('status');
+  let selectedName = 'save', loadedBytes = null, loadedType = null;
+
+  const enc = new TextEncoder();
+  const dec = new TextDecoder('utf-8', {fatal:true});
+
+  function setStatus(message, kind='') {
+    status.textContent = message;
+    status.className = 'status ' + kind;
+  }
+  function updateCount() {
+    $('count').textContent = editor.value.length.toLocaleString('vi-VN') + ' ký tự';
+  }
+  function setFileInfo(file, type) {
+    $('filename').textContent = file ? file.name : 'Chưa có file';
+    $('filesize').textContent = file ? file.size.toLocaleString('vi-VN') + ' bytes' : '0 bytes';
+    $('filetype').textContent = type || 'Chưa xác định';
+  }
+  function refreshFormatUI() {
+    const es3 = $('format').value === 'es3';
+    $('passwordWrap').classList.toggle('hidden', !es3);
+    $('keyWrap').classList.toggle('hidden', !es3);
+    $('es3Options').classList.toggle('hidden', !es3);
+  }
+  function transform(data, format, mode) {
+    const C = mode === 'compress' ? window.CompressionStream : window.DecompressionStream;
+    if (!C) throw new Error('Trình duyệt thiếu CompressionStream/DecompressionStream. Hãy cập nhật Chrome hoặc Edge.');
+    let stream;
+    try { stream = new Blob([data]).stream().pipeThrough(new C(format)); }
+    catch (e) { throw new Error('Trình duyệt không hỗ trợ ' + format + ': ' + e.message); }
+    return new Response(stream).arrayBuffer();
+  }
+  async function nsonDecrypt(bytes) {
+    return dec.decode(await transform(bytes, 'deflate-raw', 'decompress'));
+  }
+  async function nsonEncrypt(text) {
+    return new Uint8Array(await transform(enc.encode(text), 'deflate-raw', 'compress'));
+  }
+  async function gzipMaybeDecode(bytes) {
+    if (bytes.length >= 2 && bytes[0] === 0x1f && bytes[1] === 0x8b) {
+      return {text:dec.decode(await transform(bytes, 'gzip', 'decompress')), gzip:true};
+    }
+    return {text:dec.decode(bytes), gzip:false};
+  }
+  async function gzipEncode(bytes) {
+    return new Uint8Array(await transform(bytes, 'gzip', 'compress'));
+  }
+  function requireCrypto() {
+    if (!window.crypto || !crypto.subtle) {
+      throw new Error('WebCrypto chưa khả dụng. Hãy mở file bằng Chrome/Edge mới hoặc localhost.');
+    }
+  }
+  async function deriveES3Key(password, iv, bits) {
+    requireCrypto();
+    const material = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']);
+    return crypto.subtle.deriveKey(
+      {name:'PBKDF2', salt:iv, iterations:100, hash:'SHA-1'},
+      material, {name:'AES-CBC', length:Number(bits)}, false, ['encrypt','decrypt']
+    );
+  }
+  async function es3Decrypt(bytes) {
+    if (bytes.length < 32 || (bytes.length - 16) % 16 !== 0) {
+      throw new Error('Kích thước file không giống cấu trúc ES3 AES-CBC (IV 16 byte + ciphertext).');
+    }
+    const password = $('password').value;
+    if (!password) throw new Error('Hãy nhập ES3 password.');
+    const iv = bytes.slice(0,16);
+    const cipher = bytes.slice(16);
+    const key = await deriveES3Key(password, iv, $('keySize').value);
+    let plain;
+    try {
+      plain = new Uint8Array(await crypto.subtle.decrypt({name:'AES-CBC',iv}, key, cipher));
+    } catch (e) {
+      throw new Error('Decrypt ES3 thất bại. Kiểm tra password, AES key size hoặc cấu hình mã hóa của game.');
+    }
+    const decoded = await gzipMaybeDecode(plain);
+    return {text:decoded.text, gzip:decoded.gzip};
+  }
+  async function es3Encrypt(text) {
+    requireCrypto();
+    const password = $('password').value;
+    if (!password) throw new Error('Hãy nhập ES3 password.');
+    let plain = enc.encode(text);
+    if ($('gzip').checked) plain = await gzipEncode(plain);
+    const iv = crypto.getRandomValues(new Uint8Array(16));
+    const key = await deriveES3Key(password, iv, $('keySize').value);
+    const cipher = new Uint8Array(await crypto.subtle.encrypt({name:'AES-CBC',iv}, key, plain));
+    const out = new Uint8Array(iv.length + cipher.length);
+    out.set(iv,0); out.set(cipher,iv.length);
+    return out;
+  }
+  function download(data, name, type='application/octet-stream') {
+    const blob = data instanceof Blob ? data : new Blob([data], {type});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1200);
+  }
+  async function processFile(file) {
+    if (!file) return;
+    selectedName = file.name.replace(/\.(nson|es3|json|txt)$/i,'') || 'save';
+    loadedBytes = new Uint8Array(await file.arrayBuffer());
+    const ext = file.name.split('.').pop().toLowerCase();
+    setFileInfo(file, ext.toUpperCase());
+    if (ext === 'nson' || ext === 'es3') {
+      $('format').value = ext;
+      refreshFormatUI();
+      setStatus('Đã nạp ' + ext.toUpperCase() + '. Nhấn Decrypt file để giải mã.');
+    } else {
+      try {
+        editor.value = dec.decode(loadedBytes);
+        loadedType = 'text';
+        updateCount();
+        setStatus('Đã nạp văn bản. Có thể chỉnh sửa rồi chọn định dạng để encrypt.');
+      } catch(e) {
+        setStatus('File không phải văn bản UTF-8 hợp lệ.', 'err');
+      }
+    }
+  }
+  async function decryptCurrent() {
+    if (!loadedBytes) { setStatus('Hãy chọn file trước.', 'err'); return; }
+    try {
+      setStatus('Đang giải mã...');
+      let text, extra = '';
+      if ($('format').value === 'nson') {
+        text = await nsonDecrypt(loadedBytes);
+        extra = 'Raw DEFLATE';
+      } else {
+        const result = await es3Decrypt(loadedBytes);
+        text = result.text;
+        extra = 'AES-CBC' + (result.gzip ? ' + GZip' : '');
+        if (result.gzip) $('gzip').checked = true;
+      }
+      editor.value = text;
+      loadedType = $('format').value;
+      updateCount();
+      setStatus('Decrypt thành công · ' + extra + ' · ' + enc.encode(text).length.toLocaleString('vi-VN') + ' bytes văn bản.', 'ok');
+    } catch(e) {
+      setStatus('Decrypt thất bại: ' + e.message, 'err');
+    }
+  }
+  async function encryptCurrent() {
+    try {
+      setStatus('Đang encrypt...');
+      let bytes, ext;
+      if ($('format').value === 'nson') {
+        bytes = await nsonEncrypt(editor.value); ext = 'nson';
+      } else {
+        bytes = await es3Encrypt(editor.value); ext = 'es3';
+      }
+      download(bytes, selectedName + '.' + ext);
+      setStatus('Encrypt thành công · ' + ext.toUpperCase() + ' · ' + bytes.length.toLocaleString('vi-VN') + ' bytes. File đã được tải xuống.', 'ok');
+    } catch(e) {
+      setStatus('Encrypt thất bại: ' + e.message, 'err');
+    }
+  }
+
+  fileInput.addEventListener('change', e => processFile(e.target.files[0]).catch(err => setStatus(err.message,'err')));
+  $('drop').addEventListener('dragover', e => {e.preventDefault(); $('drop').classList.add('drag');});
+  $('drop').addEventListener('dragleave', () => $('drop').classList.remove('drag'));
+  $('drop').addEventListener('drop', e => {
+    e.preventDefault(); $('drop').classList.remove('drag');
+    const file = e.dataTransfer.files[0];
+    if (file) processFile(file).catch(err => setStatus(err.message,'err'));
+  });
+  $('format').addEventListener('change', refreshFormatUI);
+  $('showPassword').addEventListener('change', e => $('password').type = e.target.checked ? 'text' : 'password');
+  $('decrypt').addEventListener('click', decryptCurrent);
+  $('encrypt').addEventListener('click', encryptCurrent);
+  $('downloadText').addEventListener('click', () => {
+    download(editor.value, selectedName + '.txt', 'text/plain;charset=utf-8');
+    setStatus('Đã tải TXT.', 'ok');
+  });
+  $('downloadJson').addEventListener('click', () => {
+    download(editor.value, selectedName + '.json', 'application/json;charset=utf-8');
+    setStatus('Đã tải JSON.', 'ok');
+  });
+  $('clear').addEventListener('click', () => {
+    editor.value=''; fileInput.value=''; loadedBytes=null; loadedType=null; selectedName='save';
+    setFileInfo(null); updateCount(); setStatus('Đã xóa nội dung.');
+  });
+  editor.addEventListener('input', updateCount);
+  refreshFormatUI();
+})();
+</script>
+<script>
+(function(){
+  /* ảnh SVG sinh sẵn, dùng cho thẻ <img data-art="seed,hue,w,h"> */
+  function rng(seed){let s=seed*9301+49297;return function(){return (s=(s*9301+49297)%233280)/233280}}
+  function art(seed,hue,w,h){
+    var r=rng(seed+3),h2=(hue+70)%360,h3=(hue+160)%360,m=Math.min(w,h)/2;
+    var o='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+w+' '+h+'"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="hsl('+hue+',85%,24%)"/><stop offset="1" stop-color="hsl('+h2+',80%,12%)"/></linearGradient><radialGradient id="r"><stop offset="0" stop-color="hsl('+h3+',100%,70%)"/><stop offset="1" stop-color="hsl('+hue+',100%,55%)" stop-opacity="0"/></radialGradient></defs><rect width="'+w+'" height="'+h+'" fill="url(#g)"/>';
+    var i;
+    for(i=0;i<4;i++)o+='<circle cx="'+(r()*w)+'" cy="'+(r()*h)+'" r="'+(m*(.5+r()*.7))+'" fill="url(#r)" opacity=".8"/>';
+    o+='<g transform="translate('+w/2+' '+h/2+')">';
+    for(i=0;i<4;i++){var d=(6+r()*20).toFixed(0);o+='<circle r="'+(m*(.28+i*.17))+'" fill="none" stroke="hsl('+((hue+i*35)%360)+',100%,'+(66+i*4)+'%)" stroke-width="'+(m*.03)+'" stroke-dasharray="'+d+' '+(d*.8)+'" stroke-linecap="round" opacity=".9"/>'}
+    o+='<polygon points="0,'+(-m*.2)+' '+(m*.17)+','+(m*.1)+' '+(-m*.17)+','+(m*.1)+'" fill="hsl('+h3+',100%,75%)"/></g>';
+    for(i=0;i<8;i++)o+='<circle cx="'+(r()*w)+'" cy="'+(r()*h)+'" r="'+(1+r()*2)+'" fill="#fff" opacity=".8"/>';
+    return o+'</svg>';
+  }
+  document.querySelectorAll('img[data-art]').forEach(function(im){
+    var p=im.dataset.art.split(',').map(Number);
+    im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(art(p[0],p[1],p[2]||300,p[3]||300));
+  });
+
+  /* chuyển trang bằng rèm */
+  var c=document.getElementById('curtain');
+  document.querySelectorAll('a.home').forEach(function(a){a.addEventListener('click',function(e){
+    e.preventDefault();c.classList.add('go');setTimeout(function(){location.href=a.getAttribute('href')},650);
+  })});
+  addEventListener('pageshow',function(){c.classList.remove('go')});
+
+  /* nền hạt sáng, rất nhẹ (không nối tia) */
+  if(matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+  var cv=document.getElementById('fx'),x=cv.getContext('2d'),W,H,P=[];
+  function size(){W=cv.width=innerWidth;H=cv.height=innerHeight;
+    P=[];for(var i=0;i<Math.min(28,W/40|0);i++)P.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.35,vy:(Math.random()-.5)*.35,r:Math.random()*1.8+.6,h:Math.random()*360})}
+  size();addEventListener('resize',size);
+  var run=false;
+  function loop(){
+    if(document.hidden){run=false;return}
+    x.clearRect(0,0,W,H);
+    for(var i=0;i<P.length;i++){var p=P[i];p.x+=p.vx;p.y+=p.vy;
+      if(p.x<0)p.x=W;if(p.x>W)p.x=0;if(p.y<0)p.y=H;if(p.y>H)p.y=0;
+      x.fillStyle='hsl('+p.h+',100%,72%)';x.globalAlpha=.7;x.beginPath();x.arc(p.x,p.y,p.r,0,7);x.fill()}
+    requestAnimationFrame(loop);
+  }
+  run=true;loop();
+  document.addEventListener('visibilitychange',function(){if(!document.hidden&&!run){run=true;loop()}});
+})();
+</script>
+</body>
+</html>
