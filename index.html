@@ -28,26 +28,26 @@ body{
 
 /* HERO */
 .hero{min-height:92vh;display:grid;place-items:center;text-align:center;padding-top:40px;position:relative}
-.emblem{position:relative;width:min(300px,62vw);aspect-ratio:1;margin:0 auto 18px;animation:emIn 1.1s cubic-bezier(.2,1.3,.3,1) both}
-.emblem .core{position:absolute;inset:0;width:100%;height:100%;animation:floaty 6s ease-in-out infinite}
+.emblem{position:relative;width:min(300px,62vw);aspect-ratio:1;margin:0 auto 18px;animation:emIn .8s cubic-bezier(.2,.8,.3,1) both}
+.emblem .core{position:absolute;inset:0;width:100%;height:100%;animation:floaty 9s ease-in-out infinite}
 .emblem .orb{position:absolute;width:26%;height:26%;left:37%;top:37%;border-radius:50%;overflow:hidden;
   animation:orbit var(--d) linear infinite;transform-origin:center}
 .emblem .orb img{width:100%;height:100%;display:block}
-@keyframes emIn{from{opacity:0;transform:scale(.2) rotate(-200deg)}to{opacity:1;transform:none}}
-@keyframes floaty{50%{transform:translateY(-8px) scale(1.02)}}
+@keyframes emIn{from{opacity:0;transform:scale(.65) rotate(-35deg)}to{opacity:1;transform:none}}
+@keyframes floaty{50%{transform:translateY(-4px) scale(1.01)}}
 @keyframes orbit{from{transform:rotate(0) translateX(var(--r)) rotate(0)}to{transform:rotate(360deg) translateX(var(--r)) rotate(-360deg)}}
 
 h1{font-size:clamp(2.6rem,9vw,6.4rem);line-height:1;letter-spacing:-.02em;font-weight:900;display:flex;flex-wrap:wrap;justify-content:center;gap:0 .02em}
-h1 span{display:inline-block;opacity:0;transform:translateY(-120%) rotateX(90deg) scale(.4);
-  animation:drop .7s cubic-bezier(.2,1.5,.4,1) forwards;
+h1 span{display:inline-block;opacity:0;transform:translateY(-55%) rotateX(45deg) scale(.85);
+  animation:drop .55s cubic-bezier(.2,.8,.4,1) forwards;
   background:linear-gradient(180deg,#fff 10%,var(--cy) 55%,var(--mg) 110%);-webkit-background-clip:text;background-clip:text;color:transparent}
 @keyframes drop{to{opacity:1;transform:none}}
 .sub{margin-top:18px;max-width:640px;color:var(--mut);font-size:clamp(1rem,2.4vw,1.25rem);line-height:1.6;min-height:3.2em}
-.sub .caret{display:inline-block;width:2px;height:1.1em;background:var(--cy);vertical-align:-.15em;margin-left:3px;animation:blink .8s steps(2) infinite}
+.sub .caret{display:inline-block;width:2px;height:1.1em;background:var(--cy);vertical-align:-.15em;margin-left:3px;animation:blink 1.1s steps(2) infinite}
 @keyframes blink{50%{opacity:0}}
-.scroll{margin-top:34px;width:34px;height:56px;border:2px solid var(--mut);border-radius:20px;position:relative;margin-inline:auto;opacity:0;animation:fadeIn 1s 2.8s forwards}
-.scroll::after{content:"";position:absolute;left:50%;top:10px;width:6px;height:10px;margin-left:-3px;border-radius:4px;background:var(--cy);animation:wheel 1.6s ease-in-out infinite}
-@keyframes wheel{0%{transform:translateY(0);opacity:1}80%{transform:translateY(22px);opacity:0}100%{opacity:0}}
+.scroll{margin-top:34px;width:34px;height:56px;border:2px solid var(--mut);border-radius:20px;position:relative;margin-inline:auto;opacity:0;animation:fadeIn .7s 2s forwards}
+.scroll::after{content:"";position:absolute;left:50%;top:10px;width:6px;height:10px;margin-left:-3px;border-radius:4px;background:var(--cy);animation:wheel 2.2s ease-in-out infinite}
+@keyframes wheel{0%{transform:translateY(0);opacity:1}80%{transform:translateY(16px);opacity:0}100%{opacity:0}}
 @keyframes fadeIn{to{opacity:1}}
 
 /* GRID */
@@ -57,17 +57,17 @@ h1 span{display:inline-block;opacity:0;transform:translateY(-120%) rotateX(90deg
   position:relative;border-radius:22px;padding:12px 12px 20px;background:linear-gradient(160deg,rgba(255,255,255,.09),rgba(255,255,255,.02));
   border:1px solid rgba(255,255,255,.14);
   transform-style:preserve-3d;transition:transform .25s ease,box-shadow .3s;
-  opacity:0;transform:translateY(20px);will-change:transform,opacity;
+  opacity:0;transform:translateY(12px);will-change:transform,opacity;
 }
-.card.in{opacity:1;transform:none;transition:opacity .4s,transform .4s ease-out}
-.card.live{transition:transform .15s ease-out,box-shadow .3s}
+.card.in{opacity:1;transform:none;transition:opacity .32s,transform .32s ease-out}
+.card.live{transition:transform .2s ease-out,box-shadow .3s}
 .card:hover{border-color:var(--cy);box-shadow:0 10px 30px -10px rgba(46,230,255,.5)}
 .card .glow{position:absolute;inset:0;border-radius:22px;pointer-events:none;
   background:radial-gradient(260px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.2),transparent 60%);opacity:0;transition:opacity .3s}
 .card:hover .glow{opacity:1}
 .art{border-radius:14px;overflow:hidden;aspect-ratio:5/3;transform:translateZ(40px);box-shadow:0 18px 30px -12px rgba(0,0,0,.6)}
 .art img{width:100%;height:100%;display:block;transition:transform .4s ease-out}
-.card:hover .art img{transform:scale(1.08)}
+.card:hover .art img{transform:scale(1.04)}
 .card h3{margin:16px 6px 4px;font-size:1.2rem;transform:translateZ(30px)}
 .card p{margin:0 6px 16px;color:var(--mut);font-size:.92rem;line-height:1.45;min-height:2.8em;transform:translateZ(20px)}
 .tag{position:absolute;top:22px;left:22px;z-index:3;padding:4px 11px;border-radius:99px;font-size:.75rem;font-weight:700;
@@ -85,23 +85,23 @@ h1 span{display:inline-block;opacity:0;transform:translateY(-120%) rotateX(90deg
   background:linear-gradient(100deg,transparent,rgba(255,255,255,.65),transparent);transform:skewX(-20deg);transition:left .7s}
 .btn:hover::after{left:130%}
 .btn:hover{filter:none}
-.btn:hover{transform:translateZ(50px) scale(1.05);}
-.btn:active{transform:translateZ(50px) scale(.97)}
+.btn:hover{transform:translateZ(50px) scale(1.025);}
+.btn:active{transform:translateZ(50px) scale(.985)}
 .btn:focus-visible{outline:3px solid var(--cy);outline-offset:3px}
-.rip{position:absolute;border-radius:50%;background:rgba(255,255,255,.55);transform:scale(0);animation:rip .7s ease-out forwards;pointer-events:none}
+.rip{position:absolute;border-radius:50%;background:rgba(255,255,255,.55);transform:scale(0);animation:rip .5s ease-out forwards;pointer-events:none}
 @keyframes rip{to{transform:scale(4);opacity:0}}
 
 footer{margin-top:70px;text-align:center;color:var(--mut);font-size:.9rem}
 .marquee{overflow:hidden;white-space:nowrap;margin-top:40px;}
-.marquee div{display:inline-block;animation:mq 22s linear infinite;font-size:clamp(1.6rem,5vw,3rem);font-weight:900;color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.35)}
+.marquee div{display:inline-block;animation:mq 32s linear infinite;font-size:clamp(1.6rem,5vw,3rem);font-weight:900;color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.35)}
 @keyframes mq{to{transform:translateX(-50%)}}
 
 /* page transition */
 #curtain{position:fixed;inset:0;z-index:99;pointer-events:none;display:grid;grid-template-columns:repeat(5,1fr)}
-#curtain i{background:linear-gradient(180deg,var(--vi),var(--mg));transform:scaleY(0);transform-origin:bottom;transition:transform .4s cubic-bezier(.7,0,.3,1)}
+#curtain i{background:linear-gradient(180deg,var(--vi),var(--mg));transform:scaleY(0);transform-origin:bottom;transition:transform .3s cubic-bezier(.7,0,.3,1)}
 #curtain.go i{transform:scaleY(1)}
-#curtain i:nth-child(2){transition-delay:.05s}#curtain i:nth-child(3){transition-delay:.1s}
-#curtain i:nth-child(4){transition-delay:.15s}#curtain i:nth-child(5){transition-delay:.2s}
+#curtain i:nth-child(2){transition-delay:.035s}#curtain i:nth-child(3){transition-delay:.07s}
+#curtain i:nth-child(4){transition-delay:.105s}#curtain i:nth-child(5){transition-delay:.14s}
 
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
@@ -115,14 +115,14 @@ footer{margin-top:70px;text-align:center;color:var(--mut);font-size:.9rem}
   box-shadow:0 0 12px rgba(46,230,255,.6)}
 
 /* ===== HIỆN DẦN KHI CUỘN (reveal) ===== */
-.rv{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s cubic-bezier(.2,.8,.2,1)}
+.rv{opacity:0;transform:translateY(10px);transition:opacity .38s ease,transform .38s cubic-bezier(.2,.8,.2,1)}
 .rv.in{opacity:1;transform:none}
-.rv.up{opacity:0;transform:translateY(-16px)}
-.card.up{opacity:0;transform:translateY(-20px);transition:opacity .35s,transform .35s ease-out}
+.rv.up{opacity:0;transform:translateY(-10px)}
+.card.up{opacity:0;transform:translateY(-12px);transition:opacity .3s,transform .3s ease-out}
 #heroInner{will-change:opacity,transform}
 .title2{position:relative}
 .title2::after{content:"";display:block;width:70px;height:4px;margin:12px auto 0;border-radius:4px;
-  background:linear-gradient(90deg,var(--cy),var(--mg));transform:scaleX(0);transition:transform .8s .25s cubic-bezier(.2,.8,.2,1)}
+  background:linear-gradient(90deg,var(--cy),var(--mg));transform:scaleX(0);transition:transform .55s .15s cubic-bezier(.2,.8,.2,1)}
 .title2.in::after{transform:scaleX(1)}
 
 /* ===== NÚT ĐIỀU KHOẢN / BẢO MẬT Ở FOOTER ===== */
@@ -130,10 +130,10 @@ footer{margin-top:70px;text-align:center;color:var(--mut);font-size:.9rem}
 .f-btn{position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 20px;border-radius:99px;
   color:#e3e7ff;text-decoration:none;font-weight:600;font-size:.85rem;
   border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.05);
-  transition:transform .25s cubic-bezier(.2,.8,.2,1),border-color .25s,background .25s,box-shadow .25s}
+  transition:transform .2s ease,border-color .2s,background .2s,box-shadow .2s}
 .f-btn::after{content:"";position:absolute;top:0;left:-70%;width:45%;height:100%;
   background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);transform:skewX(-20deg);transition:left .6s}
-.f-btn:hover{transform:translateY(-3px);border-color:var(--cy);background:rgba(46,230,255,.1);box-shadow:0 10px 24px -10px rgba(46,230,255,.55)}
+.f-btn:hover{transform:translateY(-2px);border-color:var(--cy);background:rgba(46,230,255,.1);box-shadow:0 10px 24px -10px rgba(46,230,255,.55)}
 .f-btn:hover::after{left:130%}
 .f-btn:active{transform:translateY(0) scale(.97)}
 .f-btn:focus-visible{outline:3px solid var(--cy);outline-offset:3px}
@@ -146,8 +146,8 @@ footer{margin-top:70px;text-align:center;color:var(--mut);font-size:.9rem}
 .art img{opacity:0;transition:transform .4s ease-out,opacity .5s ease}
 .art img.ld{opacity:1}
 .emblem::after{content:"";position:absolute;inset:8%;border-radius:50%;z-index:-1;pointer-events:none;
-  background:radial-gradient(circle,rgba(46,230,255,.28),transparent 68%);animation:glowp 5s ease-in-out infinite}
-@keyframes glowp{50%{transform:scale(1.12);opacity:.65}}
+  background:radial-gradient(circle,rgba(46,230,255,.28),transparent 68%);animation:glowp 8s ease-in-out infinite}
+@keyframes glowp{50%{transform:scale(1.06);opacity:.55}}
 @media (max-width:700px){.f-btn{flex:1 1 150px;justify-content:center}.emblem::after{animation:none}}
 @media (prefers-reduced-motion:reduce){.rv,.rv.up,.card,.card.up,.title2::after{opacity:1!important;transform:none!important}#heroInner{opacity:1!important;transform:none!important}.art img{opacity:1}#progress{transition:none}}
 
@@ -169,10 +169,10 @@ img{pointer-events:none;-webkit-touch-callout:none}
 .readme-btn{position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:0 18px;border-radius:99px;
   color:#fff;text-decoration:none;font-weight:700;font-size:.82rem;letter-spacing:.03em;
   border:1px solid rgba(255,255,255,.22);background:rgba(20,24,58,.85);
-  transition:transform .25s cubic-bezier(.2,.8,.2,1),border-color .25s,box-shadow .25s,background .25s}
+  transition:transform .2s ease,border-color .2s,box-shadow .2s,background .2s}
 .readme-btn::after{content:"";position:absolute;top:0;left:-70%;width:45%;height:100%;
   background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);transform:skewX(-20deg);transition:left .6s}
-.readme-btn:hover{transform:translateY(-2px);border-color:var(--cy);background:rgba(46,230,255,.14);box-shadow:0 10px 24px -10px rgba(46,230,255,.55)}
+.readme-btn:hover{transform:translateY(-1px);border-color:var(--cy);background:rgba(46,230,255,.14);box-shadow:0 10px 24px -10px rgba(46,230,255,.55)}
 .readme-btn:hover::after{left:130%}
 .readme-btn:active{transform:scale(.97)}
 .readme-btn:focus-visible,.tb-brand:focus-visible{outline:3px solid var(--cy);outline-offset:3px}
@@ -189,9 +189,9 @@ img{pointer-events:none;-webkit-touch-callout:none}
   border-radius:28px;border:1px solid rgba(255,255,255,.2);
   background:linear-gradient(160deg,rgba(32,38,88,.97),rgba(14,17,42,.98));
   box-shadow:0 30px 80px rgba(0,0,0,.55),0 0 0 6px rgba(46,230,255,.06),0 0 40px rgba(138,91,255,.25);
-  transform-origin:var(--ox,90%) var(--oy,0%);animation:rmPop .42s cubic-bezier(.2,1.35,.4,1) both}
+  transform-origin:var(--ox,90%) var(--oy,0%);animation:rmPop .3s cubic-bezier(.2,.8,.4,1) both}
 .rm.closing .rm-box{animation:rmOut .2s ease-in both}
-@keyframes rmPop{0%{opacity:0;transform:scale(.15)}55%{opacity:1}100%{opacity:1;transform:none}}
+@keyframes rmPop{0%{opacity:0;transform:scale(.88)}100%{opacity:1;transform:none}}
 @keyframes rmOut{to{opacity:0;transform:scale(.3)}}
 @keyframes rmFade{from{opacity:0}}
 @keyframes rmFadeOut{to{opacity:0}}
@@ -277,7 +277,7 @@ const TOOLS = [
   {name:"NSON / ES3 Decrypter", desc:"Giải mã & chỉnh sửa file save NSON, Easy Save 3.", href:"Save_Tool_NSON_ES3.html", hue:190},
   {name:"RMMZ Decrypter",       desc:"Đọc & sửa file save của RPG Maker MZ.",           href:"savelab_rmmz.html",      hue:320},
   {name:"RPG Maker Save Editor", desc:"Chỉnh sửa file save RPG Maker MV (.rpgsave).", href:"tool3.html",  hue:45},
-  {name:"Ruby Marshal Inspector", desc:"Kiểm tra cấu trúc & dữ liệu save RGSS (.rxdata, .rvdata, .rvdata2).", href:"tool4.html",  hue:265},
+  {name:"RubyMarshal Inspector", desc:"Kiểm tra cấu trúc save RGSS (.rxdata, .rvdata,...).", href:"tool4.html",  hue:265},
   {name:"Công cụ 5", desc:"Sắp ra mắt.", href:"tool5.html",  hue:150},
   {name:"Công cụ 6", desc:"Sắp ra mắt.", href:"tool6.html",  hue:10},
   {name:"Công cụ 7", desc:"Sắp ra mắt.", href:"tool7.html",  hue:210},
@@ -304,7 +304,7 @@ function artSVG(seed,hue,w=500,h=300,anim=false){
   o+=`<g transform="translate(${w/2} ${h/2})">`;
   for(let i=0;i<5;i++){
     const rad=30+i*26, dash=(8+r()*30).toFixed(0), dir=i%2?1:-1;
-    o+=`<circle r="${rad}" fill="none" stroke="hsl(${(hue+i*35)%360},100%,${65+i*4}%)" stroke-width="${2+r()*3}" stroke-dasharray="${dash} ${dash*.8}" stroke-linecap="round" opacity=".9">${anim?`<animateTransform attributeName="transform" type="rotate" from="0" to="${360*dir}" dur="${6+i*3}s" repeatCount="indefinite"/>`:""}</circle>`;
+    o+=`<circle r="${rad}" fill="none" stroke="hsl(${(hue+i*35)%360},100%,${65+i*4}%)" stroke-width="${2+r()*3}" stroke-dasharray="${dash} ${dash*.8}" stroke-linecap="round" opacity=".9">${anim?`<animateTransform attributeName="transform" type="rotate" from="0" to="${360*dir}" dur="${12+i*4}s" repeatCount="indefinite"/>`:""}</circle>`;
   }
   o+=`<polygon points="0,-22 19,11 -19,11" fill="hsl(${h3},100%,75%)" opacity=".95"/></g>`;
   /* hạt sáng */
@@ -319,7 +319,7 @@ const uri = s => "data:image/svg+xml;charset=utf-8,"+encodeURIComponent(s);
 /* ===== Emblem ở hero: ảnh lớn + 3 ảnh quay quanh ===== */
 const em=document.getElementById("emblem");
 em.innerHTML=`<img class="core" alt="" src="${uri(artSVG(77,200,400,400,true))}" style="border-radius:50%">`+
-  [[320,"var(--mg)","9s","150%"],[45,"var(--am)","13s","190%"],[150,"#3dffb0","18s","115%"]].map((o,i)=>
+  [[320,"var(--mg)","16s","150%"],[45,"var(--am)","21s","190%"],[150,"#3dffb0","26s","115%"]].map((o,i)=>
   `<div class="orb" style="color:${o[1]};--d:${o[2]};--r:${parseInt(o[3])*0.9}px"><img alt="" src="${uri(artSVG(100+i,o[0],200,200))}"></div>`).join("");
 
 /* ===== Tiêu đề từng chữ ===== */
@@ -347,7 +347,7 @@ const blobs=document.getElementById("blobs"), bl=[];
 /* ===== Thẻ + nút ===== */
 const grid=document.getElementById("grid");
 TOOLS.forEach((t,i)=>{
-  const on=i<2;
+  const on=i<4;
   const c=document.createElement("article");c.className="card";
   c.innerHTML=`
     <span class="tag ${on?"on":""}">${on?"Sẵn sàng":"Sắp ra mắt"}</span>
@@ -379,7 +379,7 @@ cards.forEach(c=>{
     ev=e;if(raf)return;
     raf=requestAnimationFrame(()=>{raf=0;
       const b=c.getBoundingClientRect(),x=(ev.clientX-b.left)/b.width,y=(ev.clientY-b.top)/b.height;
-      c.style.transform=`rotateY(${(x-.5)*6}deg) rotateX(${(.5-y)*6}deg)`;
+      c.style.transform=`rotateY(${(x-.5)*3.5}deg) rotateX(${(.5-y)*3.5}deg)`;
       c.style.setProperty("--mx",x*100+"%");c.style.setProperty("--my",y*100+"%");
     });
   });
@@ -406,23 +406,23 @@ document.getElementById("mq").innerHTML=Array(8).fill("NSON · ES3 · RMMZ · SA
   const cv=document.getElementById("fx"),ctx=cv.getContext("2d");
   let W,H,P=[],M={x:-999,y:-999},S=[];
   function size(){W=cv.width=innerWidth;H=cv.height=innerHeight;
-    P=Array.from({length:Math.min(32,W/40|0)},()=>({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.42,vy:(Math.random()-.5)*.42,r:Math.random()*2+.6,h:Math.random()*360}))}
+    P=Array.from({length:Math.min(18,W/75|0)},()=>({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.42,vy:(Math.random()-.5)*.42,r:Math.random()*2+.6,h:Math.random()*360}))}
   size();addEventListener("resize",size);
   addEventListener("mousemove",e=>{M.x=e.clientX;M.y=e.clientY});
   function loop(){
     ctx.clearRect(0,0,W,H);
     for(const p of P){
       const dx=M.x-p.x,dy=M.y-p.y,d=Math.hypot(dx,dy);
-      if(d<180){p.vx+=dx/d*.02;p.vy+=dy/d*.02}
+      if(d<140){p.vx+=dx/d*.012;p.vy+=dy/d*.012}
       p.vx*=.99;p.vy*=.99;p.x+=p.vx;p.y+=p.vy;
       if(p.x<0)p.x=W;if(p.x>W)p.x=0;if(p.y<0)p.y=H;if(p.y>H)p.y=0;
       ctx.fillStyle=`hsl(${p.h},100%,70%)`;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,7);ctx.fill();
     }
     for(let i=0;i<P.length;i++)for(let j=i+1;j<P.length;j++){
       const d=Math.hypot(P[i].x-P[j].x,P[i].y-P[j].y);
-      if(d<100){ctx.strokeStyle=`rgba(120,160,255,${.22*(1-d/100)})`;ctx.beginPath();ctx.moveTo(P[i].x,P[i].y);ctx.lineTo(P[j].x,P[j].y);ctx.stroke()}
+      if(d<85){ctx.strokeStyle=`rgba(120,160,255,${.18*(1-d/85)})`;ctx.beginPath();ctx.moveTo(P[i].x,P[i].y);ctx.lineTo(P[j].x,P[j].y);ctx.stroke()}
     }
-    if(Math.random()<.003)S.push({x:Math.random()*W,y:-10,vx:-4-Math.random()*4,vy:5+Math.random()*4,l:1});
+    if(Math.random()<.0015)S.push({x:Math.random()*W,y:-10,vx:-4-Math.random()*4,vy:5+Math.random()*4,l:1});
     for(let i=S.length-1;i>=0;i--){const s=S[i];s.x+=s.vx;s.y+=s.vy;s.l-=.012;
       const g=ctx.createLinearGradient(s.x,s.y,s.x-s.vx*9,s.y-s.vy*9);
       g.addColorStop(0,`rgba(255,255,255,${s.l})`);g.addColorStop(1,"rgba(255,255,255,0)");
