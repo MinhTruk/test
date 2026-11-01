@@ -122,7 +122,56 @@ td input{width:100%;min-width:80px;padding:7px 9px}
 }
 @media (max-width:420px){.stats{grid-template-columns:1fr}.filebar,.file{flex-direction:column;align-items:stretch}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
-</style></head><body><div class="wrap">
+
+/* ===== animation chung (đồng bộ với Save Tool NSON/ES3) ===== */
+body{background-attachment:fixed}
+#fx{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.app,.wrap,.page{position:relative;z-index:2}
+@keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+@keyframes logoIn{from{opacity:0;transform:scale(.2) rotate(-200deg)}to{opacity:1;transform:rotate(-6deg)}}
+@keyframes bob{50%{transform:translateY(-6px)}}
+.back{position:relative;overflow:hidden;transition:transform .2s,background .2s,border-color .2s}
+.back:hover{transform:scale(1.06)}
+.back:active{transform:scale(.97)}
+.back::after{content:"";position:absolute;top:0;left:-70%;width:45%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);transform:skewX(-20deg);transition:left .7s;pointer-events:none}
+.back:hover::after{left:130%}
+#curtain{position:fixed;inset:0;z-index:99;pointer-events:none;display:grid;grid-template-columns:repeat(5,1fr)}
+#curtain i{background:linear-gradient(180deg,#8a5bff,#ff3da6);transform:scaleY(0);transform-origin:bottom;transition:transform .5s cubic-bezier(.7,0,.3,1)}
+#curtain.go i{transform:scaleY(1)}
+#curtain i:nth-child(2){transition-delay:.05s}#curtain i:nth-child(3){transition-delay:.1s}#curtain i:nth-child(4){transition-delay:.15s}#curtain i:nth-child(5){transition-delay:.2s}
+@media (max-width:620px),(hover:none) and (pointer:coarse){#fx{display:none}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.rv{opacity:1!important;transform:none!important}#curtain{display:none}}
+
+.top,.head{animation:rise .6s ease-out backwards}
+.side{animation:rise .6s .1s ease-out backwards}
+.main{animation:rise .6s .2s ease-out backwards}
+.logo{animation:logoIn 1s .1s cubic-bezier(.2,1.4,.4,1) backwards;transition:transform .3s}
+.logo:hover{transform:rotate(8deg) scale(1.1)}
+.brand h1{background:linear-gradient(180deg,#fff 10%,var(--cy) 70%,var(--mg) 140%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.nav{animation:rise .5s ease-out backwards;transition:background .2s,color .2s,transform .2s}
+.nav:hover{transform:translateX(4px)}
+.nav:nth-of-type(1){animation-delay:.2s}.nav:nth-of-type(2){animation-delay:.27s}.nav:nth-of-type(3){animation-delay:.34s}
+.nav:nth-of-type(4){animation-delay:.41s}.nav:nth-of-type(5){animation-delay:.48s}.nav:nth-of-type(6){animation-delay:.55s}
+.stat{animation:rise .5s ease-out backwards;transition:transform .25s,border-color .25s}
+.stat:hover{transform:translateY(-3px);border-color:var(--cy)}
+.stat:nth-child(1){animation-delay:.35s}.stat:nth-child(2){animation-delay:.43s}.stat:nth-child(3){animation-delay:.51s}
+.drop{animation:rise .6s .3s ease-out backwards}
+.drop.drag{transform:scale(1.015)}
+.drop .big,.drop .symbol{display:inline-block;animation:bob 2.6s ease-in-out infinite}
+.filebar.show,.file.show{animation:rise .4s ease-out backwards}
+.notice{animation:rise .5s .55s ease-out backwards}
+.btn{position:relative;overflow:hidden}
+.btn:hover{transform:translateY(-2px)}
+.btn:active{transform:scale(.97)}
+.btn:disabled:hover{transform:none}
+.btn.primary::after{content:"";position:absolute;top:0;left:-70%;width:45%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.6),transparent);transform:skewX(-20deg);transition:left .7s;pointer-events:none}
+.btn.primary:hover::after{left:130%}
+.btn.primary:disabled::after{display:none}
+.tablewrap tr{transition:background .15s}
+.tablewrap tbody tr:hover{background:rgba(255,255,255,.04)}
+.leaf{transition:background .15s}.leaf:hover{background:rgba(255,255,255,.04)}
+</style></head><body>
+<canvas id="fx"></canvas><div id="curtain"><i></i><i></i><i></i><i></i><i></i></div><div class="wrap">
 <header class="head"><div class="brand"><div class="logo">⌘</div><div><h1>Ruby Marshal Save Editor</h1><p>RPG Maker XP · VX · VX Ace</p></div></div><div class="top-r"><span class="tag">LOCAL FILE TOOL · NO UPLOAD</span><a class="back" href="index.html">← SaveLab</a></div></header>
 <div class="grid"><aside class="side"><h3>RUBY SAVE TOOLS</h3>
 <button class="nav active" data-pane="home">▦　Tổng quan</button><button class="nav" data-pane="inspect">⌕　Marshal Inspector</button><button class="nav" data-pane="hex">▤　Hex Viewer</button><button class="nav" data-pane="help">ⓘ　Định dạng & hướng dẫn</button></aside>
@@ -163,4 +212,53 @@ $('filter').oninput=()=>{let q=$('filter').value.toLowerCase();[...$('tree').chi
 $('close').onclick=()=>{file=bytes=null;rows=[];$('filebar').classList.remove('show');$('fmt').textContent='Chưa mở';$('bytes').textContent='—';$('header').textContent='—';$('summary').textContent='Chưa có file nào được mở.';$('tree').innerHTML='<div class="empty">Mở file để xem các token nhận diện được.</div>';$('hex').textContent='Chưa có dữ liệu.';note('Đã đóng file. File gốc trên thiết bị không bị thay đổi.')};
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 })();
-</script></body></html>
+</script><script>
+(function(){
+  var lite=matchMedia('(max-width:620px),(hover:none) and (pointer:coarse)').matches;
+  var reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+  /* chuyển trang bằng rèm (về trang chủ, sang trang pháp lý...) */
+  var c=document.getElementById('curtain');
+  document.addEventListener('click',function(e){
+    var a=e.target.closest&&e.target.closest('a[href]');
+    if(!a||e.defaultPrevented||e.metaKey||e.ctrlKey||e.shiftKey||e.button)return;
+    var h=a.getAttribute('href');
+    if(!h||h.charAt(0)==='#'||/^(https?:|mailto:|tel:|blob:)/i.test(h)||a.target==='_blank'||a.hasAttribute('download'))return;
+    e.preventDefault();
+    if(reduce){location.href=h;return}
+    c.classList.add('go');
+    setTimeout(function(){location.href=h},650);
+  });
+  addEventListener('pageshow',function(){c.classList.remove('go')});
+
+  /* hiện dần khi cuộn (trang pháp lý) */
+  var items=document.querySelectorAll('.page>:not(.top)');
+  if(items.length){
+    items.forEach(function(el){el.classList.add('rv')});
+    if(lite||reduce||!('IntersectionObserver' in window)){items.forEach(function(el){el.classList.add('in')})}
+    else{
+      var io=new IntersectionObserver(function(es){es.forEach(function(e){
+        if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.08});
+      items.forEach(function(el){io.observe(el)});
+    }
+  }
+
+  /* nền hạt sáng nhẹ (chỉ desktop, dừng khi ẩn tab) */
+  if(lite||reduce)return;
+  var cv=document.getElementById('fx'),x=cv.getContext('2d'),W,H,P=[],run=false;
+  function size(){W=cv.width=innerWidth;H=cv.height=innerHeight;P=[];
+    for(var i=0;i<Math.min(28,W/40|0);i++)P.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.35,vy:(Math.random()-.5)*.35,r:Math.random()*1.8+.6,h:Math.random()*360})}
+  size();addEventListener('resize',size);
+  function loop(){
+    if(document.hidden){run=false;return}
+    x.clearRect(0,0,W,H);x.globalAlpha=.7;
+    for(var i=0;i<P.length;i++){var p=P[i];p.x+=p.vx;p.y+=p.vy;
+      if(p.x<0)p.x=W;if(p.x>W)p.x=0;if(p.y<0)p.y=H;if(p.y>H)p.y=0;
+      x.fillStyle='hsl('+p.h+',100%,72%)';x.beginPath();x.arc(p.x,p.y,p.r,0,7);x.fill()}
+    requestAnimationFrame(loop);
+  }
+  run=true;loop();
+  document.addEventListener('visibilitychange',function(){if(!document.hidden&&!run){run=true;loop()}});
+})();
+</script>
+</body></html>
