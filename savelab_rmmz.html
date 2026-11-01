@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SaveLab — Save Editor</title>
+<style>
+:root{--bg:#0b1020;--panel:#121a2b;--panel2:#172238;--line:#26344d;--text:#e8eef9;--muted:#91a0b8;--accent:#7c9cff;--accent2:#9d7cff;--good:#39c98a;--bad:#ff6b7a;--shadow:0 18px 50px #0005}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(900px 500px at 15% -10%,#23366555,transparent),var(--bg);color:var(--text);font:14px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif}
+button,input,select,textarea{font:inherit}button{cursor:pointer;color:inherit;border:1px solid var(--line);background:#1a2740;border-radius:9px;padding:9px 13px;transition:.18s}button:hover{border-color:var(--accent);transform:translateY(-1px)}button.primary{background:linear-gradient(135deg,#668cff,#8768ed);border:0;color:white;font-weight:700}button.ghost{background:transparent}button.danger{color:#ff9aa4}button:disabled{opacity:.4;cursor:not-allowed;transform:none}
+header{height:68px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 clamp(16px,4vw,48px);background:#0c1322d9;backdrop-filter:blur(14px);position:sticky;top:0;z-index:5}
+.brand{display:flex;gap:11px;align-items:center;font-weight:800;font-size:18px;letter-spacing:.2px}.logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#6d91ff,#9c6bff);display:grid;place-items:center;box-shadow:0 5px 20px #718cff55}.logo svg{width:20px}.brand small{display:block;color:var(--muted);font-size:10px;font-weight:600;letter-spacing:1.5px}
+.header-actions{display:flex;gap:8px;align-items:center}.status{font-size:12px;color:var(--muted);margin-right:8px}
+main{max-width:1440px;margin:auto;padding:28px clamp(14px,3vw,38px) 50px}
+.hero{display:flex;justify-content:space-between;align-items:end;gap:20px;margin:12px 0 24px}.eyebrow{color:#9db4ff;font-size:11px;letter-spacing:2px;font-weight:800;text-transform:uppercase}.hero h1{font-size:clamp(25px,3vw,36px);line-height:1.15;margin:7px 0}.hero p{color:var(--muted);margin:0;max-width:650px}.hero-note{color:var(--muted);font-size:12px;text-align:right}
+.layout{display:grid;grid-template-columns:290px minmax(0,1fr);gap:18px;align-items:start}.panel{background:linear-gradient(180deg,#151f33,#111a2a);border:1px solid var(--line);border-radius:15px;box-shadow:var(--shadow)}.side{padding:17px;position:sticky;top:86px}.section-title{font-size:12px;text-transform:uppercase;letter-spacing:1.3px;color:#a9b8d1;font-weight:800;margin:2px 0 13px}.drop{border:1.5px dashed #53688f;border-radius:12px;padding:22px 12px;text-align:center;background:#1b2940aa;transition:.2s}.drop.drag{border-color:var(--accent);background:#263c65}.drop .upload-icon{font-size:28px;margin-bottom:5px}.drop strong{display:block;font-size:14px}.drop p{font-size:12px;color:var(--muted);margin:4px 0 13px}.drop button{font-size:12px}
+.file-card{display:none;margin-top:13px;padding:12px;border-radius:10px;background:#0d1728;border:1px solid var(--line)}.file-name{font-weight:700;overflow-wrap:anywhere}.file-meta{font-size:11px;color:var(--muted);margin-top:4px}.file-actions{display:flex;gap:7px;margin-top:10px}.file-actions button{flex:1;font-size:11px;padding:7px}
+.side-sep{height:1px;background:var(--line);margin:18px 0}.tool-list{display:grid;gap:7px}.tool{display:flex;align-items:center;gap:10px;text-align:left;width:100%;background:transparent;padding:10px;border-color:transparent;color:#c8d3e6}.tool.active{background:#26385a;border-color:#3c5687;color:white}.tool .ico{width:25px;height:25px;border-radius:7px;display:grid;place-items:center;background:#253553;color:#a9bdff}.tool small{display:block;color:var(--muted);font-size:10px}
+.mainpanel{min-width:0;overflow:hidden}.toolbar{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:13px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}.tabs{display:flex;gap:5px;flex-wrap:wrap}.tab{padding:7px 12px;border:1px solid transparent;background:transparent;color:var(--muted);font-size:12px}.tab.active{background:#26385a;border-color:#3d5685;color:white}.toolbar-right{display:flex;gap:7px;align-items:center}.toolbar-right button{font-size:12px}
+.editor-wrap{padding:16px}.empty{min-height:430px;display:grid;place-items:center;text-align:center;padding:30px}.empty-art{width:90px;height:90px;border-radius:24px;background:linear-gradient(145deg,#25385d,#1c2945);display:grid;place-items:center;font-size:38px;margin:0 auto 18px;box-shadow:inset 0 0 30px #718cff22}.empty h2{margin:0 0 7px;font-size:20px}.empty p{color:var(--muted);max-width:420px;margin:0 auto 18px}.editor-state{display:none}.editor-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}.file-kind{font-size:12px;color:var(--muted)}.file-kind b{color:#b8c9ff}.editor-actions{display:flex;gap:7px;flex-wrap:wrap}.editor-actions button{font-size:11px;padding:7px 10px}
+textarea#editor{width:100%;height:470px;resize:vertical;background:#080f1d;color:#d8e5ff;border:1px solid #2a3a56;border-radius:10px;padding:16px;outline:none;font:13px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;tab-size:2}textarea#editor:focus{border-color:#668cff;box-shadow:0 0 0 3px #668cff22}
+.hex-view{display:none;background:#080f1d;border:1px solid #2a3a56;border-radius:10px;padding:14px;min-height:470px;max-height:620px;overflow:auto;font:12px/1.8 ui-monospace,monospace;white-space:pre;color:#c9d9f5}.hex-row{display:grid;grid-template-columns:70px minmax(0,1fr) 150px;gap:14px}.hex-offset{color:#8295b5}.hex-bytes{color:#9fc1ff;word-spacing:7px}.hex-ascii{color:#b7c5da}
+.base64-box{display:none}.base64-box textarea{height:470px}
+.findbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.findbar input{min-width:140px;flex:1;background:#0b1424;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:9px 11px;outline:none}
+.bottomline{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;padding:10px 16px;border-top:1px solid var(--line);gap:10px;flex-wrap:wrap}.bottomline b{color:#b9c9e6;font-weight:600}
+.info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}.info{padding:12px;border-radius:10px;background:#0d1728;border:1px solid var(--line)}.info span{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:1px}.info strong{font-size:13px;display:block;margin-top:4px;overflow-wrap:anywhere}
+.modal-back{position:fixed;inset:0;background:#030712bb;display:none;place-items:center;z-index:20;padding:18px}.modal{width:min(520px,100%);padding:20px;background:#151f33;border:1px solid var(--line);border-radius:15px;box-shadow:var(--shadow)}.modal h3{margin:0 0 8px}.modal p{color:var(--muted);font-size:13px}.modal select{width:100%;padding:10px;background:#0b1424;color:var(--text);border:1px solid var(--line);border-radius:8px;margin:8px 0 15px}.modal-actions{display:flex;justify-content:flex-end;gap:8px}
+.toast{position:fixed;bottom:22px;left:50%;transform:translate(-50%,20px);background:#1d2d49;border:1px solid #405d91;color:white;padding:10px 15px;border-radius:10px;opacity:0;pointer-events:none;transition:.25s;z-index:30;box-shadow:var(--shadow)}.toast.show{opacity:1;transform:translate(-50%,0)}
+footer{text-align:center;color:#65748d;font-size:11px;margin-top:25px}
+@media(max-width:850px){.layout{grid-template-columns:1fr}.side{position:static}.hero{align-items:start;flex-direction:column}.hero-note{text-align:left}.side .tool-list{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){header{padding:0 13px}.status{display:none}.brand{font-size:15px}.header-actions button{padding:7px 9px;font-size:11px}.info-grid{grid-template-columns:1fr}.hex-row{grid-template-columns:48px 1fr}.hex-ascii{display:none}.toolbar{align-items:flex-start}.editor-wrap{padding:10px}textarea#editor{height:400px}.side .tool-list{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M5 4h14v16H5zM8 8h8M8 12h5M8 16h8"/></svg></div><div>SaveLab<small>SAVE FILE EDITOR</small></div></div>
+  <div class="header-actions"><span class="status" id="headerStatus">Chưa có file nào được mở</span><button class="ghost" id="themeBtn" title="Đổi giao diện">☀️</button><button class="primary" id="topOpen">＋ Mở file</button></div>
+</header>
+<main>
+  <section class="hero"><div><div class="eyebrow">Game save toolkit</div><h1>Chỉnh sửa file save của bạn.</h1><p>Mở, phân tích và chỉnh sửa dữ liệu save game ngay trên trình duyệt. File của bạn được xử lý cục bộ, không tải lên máy chủ.</p></div><div class="hero-note">LOCAL PROCESSING · NO UPLOAD</div></section>
+  <div class="layout">
+    <aside class="panel side">
+      <div class="section-title">File workspace</div>
+      <div class="drop" id="drop">
+        <div class="upload-icon">📂</div><strong>Kéo thả file vào đây</strong><p>hoặc chọn file từ thiết bị của bạn</p><button id="browseBtn">Chọn file</button>
+        <input id="fileInput" type="file" hidden>
+      </div>
+      <div class="file-card" id="fileCard"><div class="file-name" id="sideFileName">—</div><div class="file-meta" id="sideFileMeta">—</div><div class="file-actions"><button id="sideDownload">Tải xuống</button><button class="danger" id="closeFile">Đóng file</button></div></div>
+      <div class="side-sep"></div>
+      <div class="section-title">Công cụ chỉnh sửa</div>
+      <div class="tool-list">
+        <button class="tool active" data-mode="text"><span class="ico">T</span><span>Text Editor<small>Văn bản thuần</small></span></button>
+        <button class="tool" data-mode="json"><span class="ico">{ }</span><span>JSON Editor<small>Định dạng dữ liệu</small></span></button>
+        <button class="tool" data-mode="hex"><span class="ico">0x</span><span>Hex Viewer<small>Dữ liệu nhị phân</small></span></button>
+        <button class="tool" data-mode="base64"><span class="ico">64</span><span>Base64 Tool<small>Mã hóa / giải mã</small></span></button>
+      </div>
+      <div class="side-sep"></div>
+      <div class="section-title">Game formats</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.65">Các định dạng phổ biến có thể cần giải nén hoặc bộ giải mã riêng. SaveLab hỗ trợ xem dữ liệu thô và chỉnh sửa JSON/Text/Hex/Base64; chưa tự động giải mã mọi định dạng độc quyền.</div>
+    </aside>
+    <section class="panel mainpanel">
+      <div class="toolbar">
+        <div class="tabs">
+          <button class="tab active" data-mode="text">Text</button><button class="tab" data-mode="json">JSON</button><button class="tab" data-mode="hex">Hex</button><button class="tab" data-mode="base64">Base64</button>
+        </div>
+        <div class="toolbar-right"><button id="undoBtn" disabled>↶ Hoàn tác</button><button id="saveBtn" class="primary" disabled>↓ Xuất file</button></div>
+      </div>
+      <div class="editor-wrap">
+        <div class="empty" id="emptyState"><div><div class="empty-art">🧩</div><h2>Workspace đang trống</h2><p>Chọn một file save game để bắt đầu. Bạn có thể xem dữ liệu, chỉnh sửa và xuất file mới mà không làm thay đổi file gốc.</p><button class="primary" id="emptyOpen">Mở file đầu tiên</button></div></div>
+        <div class="editor-state" id="editorState">
+          <div class="editor-top"><div class="file-kind">Đang chỉnh sửa: <b id="currentKind">TEXT</b> <span id="dirtyMark"></span></div><div class="editor-actions"><button id="formatBtn">✧ Format JSON</button><button id="copyBtn">Sao chép</button><button id="resetBtn">Khôi phục bản gốc</button></div></div>
+          <div class="findbar" id="findbar"><input id="findInput" placeholder="Tìm nội dung..."><input id="replaceInput" placeholder="Thay thế bằng..."><button id="replaceBtn">Thay thế</button></div>
+          <textarea id="editor" spellcheck="false" aria-label="Nội dung file"></textarea>
+          <div class="hex-view" id="hexView"></div>
+          <div class="base64-box" id="base64Box"><textarea id="base64Text" spellcheck="false" placeholder="Dán chuỗi Base64 hoặc nội dung để mã hóa..."></textarea><div class="editor-actions" style="margin-top:9px"><button class="primary" id="decodeBtn">Giải mã Base64</button><button id="encodeBtn">Mã hóa nội dung</button><button id="applyBase64Btn">Dùng kết quả làm nội dung file</button></div></div>
+          <div class="info-grid"><div class="info"><span>Kích thước</span><strong id="statSize">—</strong></div><div class="info"><span>Định dạng nhận diện</span><strong id="statType">—</strong></div><div class="info"><span>Trạng thái</span><strong id="statStatus">Đã tải</strong></div></div>
+        </div>
+      </div>
+      <div class="bottomline"><span id="lineInfo">Sẵn sàng · Chưa có dữ liệu</span><span>SaveLab runs locally in your browser</span></div>
+    </section>
+  </div>
+  <footer>SaveLab is an independent browser-based utility. Always keep a backup of important save files.</footer>
+</main>
+<div class="modal-back" id="formatModal"><div class="modal"><h3>Chọn cách mở file</h3><p>File này không giống văn bản UTF-8 thông thường. Bạn muốn mở dưới dạng nào?</p><select id="openAs"><option value="hex">Hex (khuyên dùng cho file nhị phân)</option><option value="text">Text thô</option><option value="base64">Base64</option></select><div class="modal-actions"><button id="cancelModal">Hủy</button><button class="primary" id="confirmModal">Mở file</button></div></div></div>
+<div class="toast" id="toast"></div>
+<script>
+(() => {
+ const $=id=>document.getElementById(id);
+ let file=null, originalBytes=null, currentBytes=null, mode='text', history=[], dirty=false, pendingFile=null, rmmzSave=false;
+ const enc=new TextEncoder();
+ const decoder=new TextDecoder('utf-8',{fatal:true});
+ const sizeFmt=n=>n<1024?n+' B':n<1048576?(n/1024).toFixed(1)+' KB':(n/1048576).toFixed(2)+' MB';
+ function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2300)}
+
+ async function streamTransform(bytes, kind){
+   const C = kind==='inflate' ? DecompressionStream : CompressionStream;
+   if(!C) throw new Error('Trình duyệt không hỗ trợ giải nén/nén zlib');
+   const stream = new Blob([bytes]).stream().pipeThrough(new C('deflate'));
+   return new Uint8Array(await new Response(stream).arrayBuffer());
+ }
+ async function decodeRmmz(raw){
+   // Standard RPG Maker MZ saves are zlib/deflate-compressed JSON.
+   const candidates=[raw];
+   // Some tools accidentally save binary bytes as UTF-8-encoded Latin-1 text.
+   try{
+     const txt=new TextDecoder('utf-8',{fatal:true}).decode(raw);
+     if([...txt].every(ch=>ch.codePointAt(0)<=255)){
+       const repaired=Uint8Array.from([...txt],ch=>ch.codePointAt(0));
+       if(repaired.length!==raw.length || repaired.some((v,i)=>v!==raw[i])) candidates.push(repaired);
+     }
+   }catch{}
+   let lastError;
+   for(const candidate of candidates){
+     try{
+       const out=await streamTransform(candidate,'inflate');
+       const text=new TextDecoder('utf-8',{fatal:true}).decode(out);
+       JSON.parse(text);
+       return enc.encode(text);
+     }catch(e){lastError=e}
+   }
+   throw lastError || new Error('Không nhận diện được dữ liệu RMMZ');
+ }
+
+ function detect(bytes,name){const ext=(name.split('.').pop()||'').toLowerCase();if(['json'].includes(ext))return 'JSON';if(['txt','ini','xml','yaml','yml','csv','cfg','log','lua','js'].includes(ext))return 'TEXT';if(['sav','save','dat','bin','rpgsave'].includes(ext))return 'SAVE / BINARY';try{decoder.decode(bytes);return 'TEXT / UTF-8'}catch{return 'BINARY'}}
+ function setMode(m){mode=m;document.querySelectorAll('[data-mode]').forEach(b=>b.classList.toggle('active',b.dataset.mode===m));$('editor').style.display=(m==='text'||m==='json')?'block':'none';$('hexView').style.display=m==='hex'?'block':'none';$('base64Box').style.display=m==='base64'?'block':'none';$('findbar').style.display=(m==='text'||m==='json')?'flex':'none';$('formatBtn').style.display=(m==='text'||m==='json')?'inline-block':'none';$('currentKind').textContent=m.toUpperCase();if(file)renderMode()}
+ function bytesToHex(bytes){let out='';for(let i=0;i<bytes.length;i+=16){let chunk=bytes.slice(i,i+16);let hex=Array.from(chunk,b=>b.toString(16).padStart(2,'0')).join(' ');let ascii=Array.from(chunk,b=>b>=32&&b<=126?String.fromCharCode(b):'.').join('');out+=`<div class="hex-row"><span class="hex-offset">${i.toString(16).padStart(8,'0')}</span><span class="hex-bytes">${hex}</span><span class="hex-ascii">${ascii}</span></div>`}return out||'File rỗng'}
+ function getText(){return $('editor').value}
+ function updateBytesFromEditor(){currentBytes=enc.encode(getText());markDirty()}
+ function markDirty(){dirty=true;$('dirtyMark').textContent='● Có thay đổi';$('dirtyMark').style.color='#ffc56b';$('statStatus').textContent='Đã chỉnh sửa';$('saveBtn').disabled=false;$('undoBtn').disabled=history.length===0}
+ function renderMode(){if(!file)return;if(mode==='hex'){$('hexView').innerHTML=bytesToHex(currentBytes);$('statSize').textContent=sizeFmt(currentBytes.length)}else if(mode==='base64'){$('base64Text').value=btoa(String.fromCharCode(...currentBytes.slice(0,Math.min(currentBytes.length,500000))));$('statSize').textContent=sizeFmt(currentBytes.length)}else{try{$('editor').value=decoder.decode(currentBytes)}catch{$('editor').value='';toast('File nhị phân không thể hiển thị như UTF-8. Hãy dùng Hex Viewer.')} $('statSize').textContent=sizeFmt(currentBytes.length)}$('statType').textContent=detect(currentBytes,file.name);$('lineInfo').textContent=`${currentBytes.length.toLocaleString()} bytes · ${file.name}`}
+ function openFile(f){
+   if(!f)return;
+   file=f;
+   const reader=new FileReader();
+   reader.onload=async()=>{
+     const raw=new Uint8Array(reader.result);
+     rmmzSave=(f.name||'').toLowerCase().endsWith('.rmmzsave');
+     try{
+       if(rmmzSave){
+         currentBytes=await decodeRmmz(raw);
+         originalBytes=new Uint8Array(currentBytes);
+         history=[];dirty=false;
+         $('emptyState').style.display='none';$('editorState').style.display='block';$('fileCard').style.display='block';
+         $('sideFileName').textContent=f.name;
+         $('sideFileMeta').textContent=sizeFmt(f.size)+' · RPG Maker MZ (zlib + JSON)';
+         $('headerStatus').textContent=f.name;
+         $('saveBtn').disabled=false;$('undoBtn').disabled=true;
+         setMode('json');renderMode();
+         $('statType').textContent='RPG Maker MZ · JSON đã giải nén';
+         $('lineInfo').textContent=`${currentBytes.length.toLocaleString()} bytes JSON · ${f.name}`;
+         toast('Đã giải mã file RPG Maker MZ');
+         return;
+       }
+       originalBytes=new Uint8Array(raw);currentBytes=new Uint8Array(raw);history=[];dirty=false;
+       $('emptyState').style.display='none';$('editorState').style.display='block';$('fileCard').style.display='block';
+       $('sideFileName').textContent=f.name;$('sideFileMeta').textContent=sizeFmt(f.size)+' · '+(f.type||'unknown MIME');
+       $('headerStatus').textContent=f.name;$('saveBtn').disabled=false;$('undoBtn').disabled=true;
+       const kind=detect(currentBytes,f.name);let m=kind==='JSON'?'json':kind.startsWith('TEXT')?'text':'hex';
+       if(m==='hex'&&kind==='SAVE / BINARY'){pendingFile=f;$('formatModal').style.display='grid';$('openAs').value='hex'}
+       setMode(m);renderMode();toast('Đã mở '+f.name);
+     }catch(err){
+       rmmzSave=false;
+       toast('Không giải mã được file .rmmzsave: '+(err.message||'Dữ liệu không hợp lệ'));
+       file=null;
+     }
+   };
+   reader.readAsArrayBuffer(f);
+ }
+ function closeFile(){file=null;originalBytes=null;currentBytes=null;history=[];dirty=false;$('emptyState').style.display='grid';$('editorState').style.display='none';$('fileCard').style.display='none';$('headerStatus').textContent='Chưa có file nào được mở';$('saveBtn').disabled=true;$('undoBtn').disabled=true;$('lineInfo').textContent='Sẵn sàng · Chưa có dữ liệu'}
+ async function download(){
+   if(!file)return;
+   try{
+     let output=currentBytes;
+     if(rmmzSave){
+       const json=new TextDecoder().decode(currentBytes);
+       JSON.parse(json);
+       output=await streamTransform(currentBytes,'deflate');
+     }
+     const blob=new Blob([output],{type:'application/octet-stream'});
+     const url=URL.createObjectURL(blob);const a=document.createElement('a');
+     a.href=url;a.download=file.name.replace(/(\.[^.]+)?$/, '_edited$1');
+     document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+     toast(rmmzSave?'Đã nén và xuất file RMMZ':'Đã xuất file đã chỉnh sửa');
+   }catch(e){toast('Không thể xuất file: '+e.message)}
+ }
+ function pushHistory(){history.push(new Uint8Array(currentBytes));if(history.length>30)history.shift();$('undoBtn').disabled=false}
+ function undo(){if(!history.length)return;currentBytes=history.pop();dirty=true;renderMode();$('undoBtn').disabled=!history.length;toast('Đã hoàn tác')}
+ function applyEditorChange(){pushHistory();updateBytesFromEditor()}
+ function formatJson(){try{let obj=JSON.parse(getText());pushHistory();$('editor').value=JSON.stringify(obj,null,2);updateBytesFromEditor();toast('Đã format JSON')}catch(e){toast('JSON không hợp lệ: '+e.message)}}
+ function replaceText(){let find=$('findInput').value;if(!find){toast('Nhập nội dung cần tìm');return}let txt=getText();if(!txt.includes(find)){toast('Không tìm thấy nội dung');return}pushHistory();$('editor').value=txt.split(find).join($('replaceInput').value);updateBytesFromEditor();toast('Đã thay thế nội dung')}
+ function base64Decode(){try{let raw=atob($('base64Text').value.trim());let bytes=Uint8Array.from(raw,c=>c.charCodeAt(0));$('base64Text').value=new TextDecoder().decode(bytes);toast('Đã giải mã Base64')}catch{toast('Chuỗi Base64 không hợp lệ')}}
+ function base64Encode(){let bytes=enc.encode($('base64Text').value);let bin='';for(let i=0;i<bytes.length;i+=0x8000)bin+=String.fromCharCode(...bytes.subarray(i,i+0x8000));$('base64Text').value=btoa(bin);toast('Đã mã hóa Base64')}
+ function applyBase64(){try{pushHistory();currentBytes=enc.encode($('base64Text').value);dirty=true;setMode('text');renderMode();toast('Đã áp dụng nội dung')}catch{toast('Không thể áp dụng')}}
+ function reset(){if(!originalBytes)return;if(!confirm('Khôi phục dữ liệu ban đầu? Mọi thay đổi hiện tại sẽ bị mất.'))return;pushHistory();currentBytes=new Uint8Array(originalBytes);dirty=false;renderMode();$('statStatus').textContent='Đã khôi phục';$('dirtyMark').textContent='';toast('Đã khôi phục bản gốc')}
+ function browse(){ $('fileInput').click() }
+ $('browseBtn').onclick=browse;$('topOpen').onclick=browse;$('emptyOpen').onclick=browse;$('fileInput').onchange=e=>{if(e.target.files[0])openFile(e.target.files[0]);e.target.value=''};
+ $('drop').addEventListener('dragover',e=>{e.preventDefault();$('drop').classList.add('drag')});$('drop').addEventListener('dragleave',()=>$('drop').classList.remove('drag'));$('drop').addEventListener('drop',e=>{e.preventDefault();$('drop').classList.remove('drag');if(e.dataTransfer.files[0])openFile(e.dataTransfer.files[0])});
+ document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>setMode(b.dataset.mode));
+ $('saveBtn').onclick=download;$('sideDownload').onclick=download;$('closeFile').onclick=closeFile;$('undoBtn').onclick=undo;$('formatBtn').onclick=formatJson;$('replaceBtn').onclick=replaceText;$('resetBtn').onclick=reset;
+ $('editor').addEventListener('input',()=>{if(file){pushHistory();updateBytesFromEditor()}});
+ $('copyBtn').onclick=async()=>{try{await navigator.clipboard.writeText(getText());toast('Đã sao chép')}catch{toast('Trình duyệt không cho phép sao chép') }};
+ $('decodeBtn').onclick=base64Decode;$('encodeBtn').onclick=base64Encode;$('applyBase64Btn').onclick=applyBase64;
+ $('cancelModal').onclick=()=>$('formatModal').style.display='none';$('confirmModal').onclick=()=>{if(pendingFile){setMode($('openAs').value);renderMode()}$('formatModal').style.display='none';pendingFile=null};
+ $('themeBtn').onclick=()=>{document.body.classList.toggle('light');if(document.body.classList.contains('light')){document.documentElement.style.setProperty('--bg','#edf1f8');document.documentElement.style.setProperty('--panel','#fff');document.documentElement.style.setProperty('--panel2','#f5f7fb');document.documentElement.style.setProperty('--line','#d5ddeb');document.documentElement.style.setProperty('--text','#1c2940');document.documentElement.style.setProperty('--muted','#61718b');document.querySelectorAll('.panel').forEach(p=>p.style.background='linear-gradient(180deg,#fff,#f7f9fd)');$('themeBtn').textContent='🌙'}else{location.reload()}};
+ $('editor').addEventListener('keydown',e=>{if(e.key==='Tab'){e.preventDefault();let s=e.target.selectionStart,en=e.target.selectionEnd;e.target.setRangeText('  ',s,en,'end');e.target.dispatchEvent(new Event('input'))}});
+})();
+</script>
+</body>
+</html>
