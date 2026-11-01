@@ -1,26 +1,166 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Công cụ 4 – SaveLab</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Ruby Marshal Save Editor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;800&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#070a1c">
 <style>
-*{box-sizing:border-box;margin:0}
-body{min-height:100vh;display:grid;place-items:center;text-align:center;color:#eef1ff;font-family:"Lexend","Segoe UI",Roboto,system-ui,sans-serif;
-background:radial-gradient(900px 600px at 20% 0%,#1b1f5e,transparent 60%),radial-gradient(800px 600px at 100% 100%,#4a0f48,transparent 55%),#070a1c;overflow:hidden}
-.ring{width:140px;height:140px;margin:0 auto 26px;border-radius:50%;border:6px solid transparent;border-top-color:#2ee6ff;border-right-color:#ff3da6;animation:r 1.4s linear infinite;box-shadow:0 0 40px rgba(46,230,255,.4)}
-@keyframes r{to{transform:rotate(360deg)}}
-h1{font-size:clamp(2rem,6vw,3.6rem);animation:in .8s cubic-bezier(.2,1.4,.4,1) both}
-p{color:#9aa4d6;margin:12px 0 28px}
-a{display:inline-block;color:#fff;text-decoration:none;font-weight:800;padding:13px 28px;border-radius:14px;background:linear-gradient(110deg,#8a5bff,#ff3da6);transition:transform .2s}
-a:hover{transform:scale(1.07)}
-@keyframes in{from{opacity:0;transform:translateY(-40px) scale(.6)}}
-</style>
-</head>
-<body>
-<div><div class="ring"></div><h1>Công cụ 4</h1><p>Trang này đang chờ nội dung. Sẽ cập nhật sau.</p><a href="index.html">Về trang chủ</a></div>
-</body>
-</html>
+:root{--bg:#070a1c;--ink:#eef1ff;--mut:#9aa4d6;--cy:#2ee6ff;--mg:#ff3da6;--am:#ffc247;--vi:#8a5bff;
+  --line:rgba(255,255,255,.14);--panel:linear-gradient(160deg,rgba(255,255,255,.08),rgba(255,255,255,.025));--field:#080d20}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;min-height:100vh;overflow-x:hidden;color:var(--ink);
+  background:radial-gradient(1200px 800px at 20% -10%,#1b1f5e 0%,transparent 60%),radial-gradient(1000px 700px at 100% 10%,#4a0f48 0%,transparent 55%),var(--bg);
+  font:14px/1.55 "Lexend","Segoe UI",Roboto,system-ui,sans-serif}
+button,input,textarea{font:inherit}button{cursor:pointer}
+a:focus-visible,.btn:focus-visible,.nav:focus-visible{outline:3px solid var(--cy);outline-offset:2px}
+
+/* khung trang */
+.app,.wrap{max-width:1280px;margin:0 auto;padding:22px max(18px,env(safe-area-inset-right)) calc(28px + env(safe-area-inset-bottom)) max(18px,env(safe-area-inset-left))}
+.top,.head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:22px}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.logo{flex:none;width:44px;height:44px;border-radius:14px;display:grid;place-items:center;font-size:20px;font-weight:900;color:#0c1024;
+  background:linear-gradient(135deg,var(--cy),#b6a1ff 55%,var(--mg));transform:rotate(-6deg);box-shadow:0 7px 22px rgba(103,210,255,.22)}
+.brand h1{margin:0;font-size:1.05rem;font-weight:800;letter-spacing:.02em}
+.brand p{margin:2px 0 0;color:var(--mut);font-size:.72rem}
+.top-r{display:flex;align-items:center;gap:10px;flex:none}
+.pill,.tag{border:1px solid var(--line);color:var(--mut);padding:8px 12px;border-radius:99px;font-size:.68rem;letter-spacing:.06em;white-space:nowrap}
+.back{display:inline-flex;align-items:center;min-height:42px;padding:0 16px;border-radius:99px;color:#e5e7ff;text-decoration:none;font-weight:600;font-size:.8rem;
+  border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.05);transition:background .2s,border-color .2s}
+.back:hover{background:rgba(46,230,255,.12);border-color:var(--cy)}
+
+.layout,.grid{display:grid;grid-template-columns:250px minmax(0,1fr);gap:18px;align-items:start}
+.side,.main,.drop,.stat,.notice,.file,.filebar{background:var(--panel);border:1px solid var(--line);border-radius:20px}
+.side{padding:14px;position:sticky;top:16px}
+.side-title,.side>h3{margin:0;padding:8px 10px;font-size:.62rem;font-weight:700;letter-spacing:.18em;color:var(--mut)}
+.nav{display:flex;align-items:center;gap:10px;width:100%;margin:2px 0;padding:12px;border:0;border-radius:12px;background:transparent;color:#b7bfe6;text-align:left;
+  transition:background .2s,color .2s}
+.nav:hover{background:rgba(255,255,255,.07);color:#fff}
+.nav.active{background:rgba(46,230,255,.1);color:#fff;box-shadow:inset 3px 0 var(--cy)}
+.nav .ico{width:22px;text-align:center}
+.side-foot{margin-top:14px;padding:13px 9px 4px;border-top:1px solid var(--line);color:var(--mut);font-size:.68rem}
+
+.main{padding:24px;min-height:680px;animation:fade .45s ease both}
+.welcome,.title{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+.welcome h2,.title h2{margin:0 0 4px;font-size:1.45rem;font-weight:800}
+.sub,.muted{color:var(--mut)}.sub{margin:0}
+
+/* nút */
+.btn{min-height:42px;padding:10px 16px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.06);color:var(--ink);font-weight:600;font-size:.85rem;
+  transition:transform .15s,border-color .2s,background .2s,filter .2s}
+.btn:hover{border-color:var(--cy);background:rgba(46,230,255,.1)}
+.btn:active{transform:scale(.97)}
+.btn.primary{border:0;color:#fff;font-weight:800;background:linear-gradient(110deg,var(--vi),var(--mg) 55%,var(--am))}
+.btn.primary:hover{filter:brightness(1.12)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none;filter:none}
+
+/* vùng thả file */
+.drop{margin:20px 0;padding:28px 16px;text-align:center;border:1px dashed rgba(46,230,255,.4);background:rgba(46,230,255,.04);transition:border-color .2s,background .2s}
+.drop.drag{border-color:var(--mg);background:rgba(255,61,166,.08)}
+.drop .big,.drop .symbol{font-size:2rem;line-height:1.2;color:var(--cy)}
+.drop h3{margin:8px 0 4px;font-size:1.05rem}
+.drop p{margin:0 0 14px;color:var(--mut)}
+.filebar,.file{display:none;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;margin:14px 0;border-radius:16px}
+.filebar.show,.file.show{display:flex}
+.filemeta{min-width:0}.filemeta strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.file strong{display:block;overflow-wrap:anywhere}
+.filemeta small,.file small{color:var(--mut)}
+
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}
+.stat{padding:13px 15px;border-radius:16px}
+.stat small{color:var(--mut)}
+.stat strong,.stat b{display:block;margin-top:3px;font-size:1.05rem;overflow-wrap:anywhere}
+
+.notice{padding:12px 14px;margin:14px 0;border-radius:14px;font-size:.8rem;color:#cdd3f5}
+.notice.warn{border-color:rgba(255,194,71,.4);background:rgba(255,194,71,.08);color:#ffe3a6}
+.notice.good{border-color:rgba(61,255,176,.4);background:rgba(61,255,176,.08);color:#b6ffe0}
+
+/* tab nội dung */
+.section,.pane{display:none}
+.section.active,.pane.active{display:block;animation:fade .3s ease both}
+.section h2,.pane h3{margin:0 0 4px;font-size:1.2rem;font-weight:800}
+.section .desc{margin:0 0 16px;color:var(--mut)}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0}
+.search,.input,td input,.raw{background:var(--field);border:1px solid rgba(255,255,255,.16);border-radius:10px;color:var(--ink);padding:9px 12px;outline:none;transition:border-color .2s}
+.search,.input{min-width:220px}
+.search:focus,.input:focus,td input:focus,.raw:focus{border-color:var(--cy)}
+.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:14px}
+table{width:100%;border-collapse:collapse;min-width:520px}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid rgba(255,255,255,.08)}
+th{background:rgba(255,255,255,.05);color:var(--mut);font-size:.68rem;text-transform:uppercase;letter-spacing:.08em}
+td input{width:100%;min-width:80px;padding:7px 9px}
+.empty{padding:28px;text-align:center;color:var(--mut)}
+.raw{width:100%;min-height:420px;padding:14px;border-radius:14px;background:var(--field);color:#cfe0ff;font:12px/1.6 ui-monospace,Consolas,monospace;resize:vertical}
+.hex{white-space:pre-wrap;word-break:break-all;max-height:420px;overflow:auto;padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--field);color:#a9d9ff;font:12px/1.7 ui-monospace,Consolas,monospace}
+.tree{max-height:540px;overflow:auto;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--field)}
+.leaf{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:4px 0}
+.leaf .muted{font-family:ui-monospace,Consolas,monospace;font-size:.75rem}
+.type{padding:1px 7px;border:1px solid rgba(138,91,255,.55);border-radius:10px;color:#c9baff;font-size:10px}
+.value{color:#dfe6ff;overflow-wrap:anywhere}
+
+.footer{margin:28px 0 4px;text-align:center;color:#7e86ad;font-size:.75rem}
+.f-links{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 18px;margin-top:8px}
+.f-links a{padding:6px 2px;color:#cfd6ff;text-decoration:none}
+.f-links a:hover{color:var(--cy)}
+
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+@media (max-width:800px){
+  .app,.wrap{padding:14px max(12px,env(safe-area-inset-right)) calc(20px + env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left))}
+  .layout,.grid{grid-template-columns:1fr}
+  .side{position:static;display:flex;gap:4px;padding:8px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .side-title,.side>h3,.side-foot{display:none}
+  .nav{width:auto;flex:none;white-space:nowrap;padding:10px 14px}
+  .nav .ico{display:none}
+  .nav.active{box-shadow:inset 0 -3px var(--cy)}
+  .main{padding:16px;min-height:0;border-radius:18px}
+  .stats{grid-template-columns:1fr 1fr}
+  .pill,.tag,.brand p{display:none}
+  .welcome h2,.title h2{font-size:1.25rem}
+  .search,.input{min-width:0;flex:1 1 100%}
+  input,textarea,.search,.input{font-size:16px}
+  .raw{min-height:300px}
+}
+@media (max-width:420px){.stats{grid-template-columns:1fr}.filebar,.file{flex-direction:column;align-items:stretch}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style></head><body><div class="wrap">
+<header class="head"><div class="brand"><div class="logo">⌘</div><div><h1>Ruby Marshal Save Editor</h1><p>RPG Maker XP · VX · VX Ace</p></div></div><div class="top-r"><span class="tag">LOCAL FILE TOOL · NO UPLOAD</span><a class="back" href="index.html">← SaveLab</a></div></header>
+<div class="grid"><aside class="side"><h3>RUBY SAVE TOOLS</h3>
+<button class="nav active" data-pane="home">▦　Tổng quan</button><button class="nav" data-pane="inspect">⌕　Marshal Inspector</button><button class="nav" data-pane="hex">▤　Hex Viewer</button><button class="nav" data-pane="help">ⓘ　Định dạng & hướng dẫn</button></aside>
+<main class="main"><div class="title"><div><h2 id="heading">Ruby Save Workspace</h2><div class="muted" id="subheading">Công cụ riêng cho các save dùng Ruby Marshal.</div></div><button class="btn primary" id="open">＋ Mở save</button></div>
+<div class="drop" id="drop"><div class="symbol">⇧</div><h3>Kéo thả save Ruby Marshal</h3><p>Hỗ trợ đuôi .rxdata · .rvdata · .rvdata2</p><button class="btn" id="pick">Chọn file</button><input hidden type="file" id="fileInput" accept=".rxdata,.rvdata,.rvdata2"></div>
+<div class="file" id="filebar"><div><strong id="filename">—</strong><small class="muted" id="filemeta">—</small></div><button class="btn" id="close">Đóng</button></div>
+<div class="stats"><div class="stat"><small>Định dạng</small><b id="fmt">Chưa mở</b></div><div class="stat"><small>Dung lượng</small><b id="bytes">—</b></div><div class="stat"><small>Marshal header</small><b id="header">—</b></div></div>
+<div class="notice" id="notice">🔒 File chỉ được đọc trong trình duyệt. Hãy sao lưu save gốc trước khi thử công cụ chỉnh sửa.</div>
+<section class="pane active" id="pane-home"><h3>Tổng quan</h3><p class="muted">Nhận diện file Ruby Marshal và xem thông tin nhị phân cơ bản.</p><div id="summary" class="empty">Chưa có file nào được mở.</div></section>
+<section class="pane" id="pane-inspect"><h3>Marshal Inspector</h3><p class="muted">Kiểm tra cấu trúc token của Ruby Marshal v4.8. Đây là bộ kiểm tra cấu trúc, không phải trình giải mã object RGSS hoàn chỉnh.</p><div class="toolbar"><input class="input" id="filter" placeholder="Lọc token / loại dữ liệu..."></div><div class="tree" id="tree"><div class="empty">Mở file để xem các token nhận diện được.</div></div></section>
+<section class="pane" id="pane-hex"><h3>Hex Viewer</h3><p class="muted">Byte đầu file, offset và ASCII tương ứng.</p><div class="hex" id="hex">Chưa có dữ liệu.</div></section>
+<section class="pane" id="pane-help"><h3>Thông tin định dạng</h3><div class="notice"><b>.rxdata</b> — RPG Maker XP. Thường lưu bằng Ruby Marshal.</div><div class="notice"><b>.rvdata</b> — RPG Maker VX. Thường lưu bằng Ruby Marshal.</div><div class="notice"><b>.rvdata2</b> — RPG Maker VX Ace. Thường lưu bằng Ruby Marshal.</div><div class="notice warn"><b>Giới hạn hiện tại:</b> Công cụ này nhận diện header và phân tích token ở mức byte. Nó chưa giải tuần tự hóa toàn bộ đồ thị object RGSS, chưa hỗ trợ sửa object rồi Marshal.dump trở lại. Không thể dùng Hex Viewer để sửa trực tiếp save an toàn.</div><p class="muted">Ruby Marshal có object links, symbol links, class metadata và các kiểu object riêng. Chỉ thay byte hoặc chuyển thành JSON thường sẽ làm mất tham chiếu và có thể khiến game không tải được save.</p></section>
+<div class="footer">Ruby Marshal Save Editor · XP / VX / VX Ace · Bảo toàn file gốc<nav class="f-links" aria-label="Pháp lý"><a href="index.html">Trang chủ</a><a href="terms-of-service.html">Điều khoản dịch vụ</a><a href="privacy-policy.html">Chính sách bảo mật</a></nav></div></main></div></div>
+<script>
+(()=>{'use strict';const $=id=>document.getElementById(id);let file=null,bytes=null,rows=[];
+const nav=[...document.querySelectorAll('.nav')];nav.forEach(b=>b.onclick=()=>{nav.forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.pane').forEach(x=>x.classList.toggle('active',x.id==='pane-'+b.dataset.pane));$('heading').textContent=b.textContent.trim();$('subheading').textContent=({home:'Thông tin file đang mở.',inspect:'Cấu trúc token Ruby Marshal.',hex:'Dữ liệu nhị phân của save.',help:'Các giới hạn và lưu ý tương thích.'})[b.dataset.pane]});
+function human(n){return n<1024?n+' B':(n/1024).toFixed(2)+' KB'}function note(t,c=''){$('notice').className='notice '+c;$('notice').textContent=t}
+$('open').onclick=$('pick').onclick=()=>$('fileInput').click();$('fileInput').onchange=e=>{if(e.target.files[0])load(e.target.files[0]);e.target.value=''};
+const d=$('drop');['dragover','dragenter'].forEach(x=>d.addEventListener(x,e=>{e.preventDefault();d.classList.add('drag')}));['dragleave','drop'].forEach(x=>d.addEventListener(x,e=>{e.preventDefault();d.classList.remove('drag')}));d.ondrop=e=>{let f=e.dataTransfer.files[0];if(f)load(f)};
+function load(f){let ext=f.name.split('.').pop().toLowerCase();if(!['rxdata','rvdata','rvdata2'].includes(ext)){note('File không thuộc nhóm .rxdata / .rvdata / .rvdata2.','warn');return}file=f;let r=new FileReader();r.onload=()=>{bytes=new Uint8Array(r.result);render()};r.readAsArrayBuffer(f)}
+function readLong(b,p){let c=b[p++];if(c===0)return [0,p];let n=Math.abs(c);if(n>4)return [null,p];let v=0;if(c>0){for(let i=0;i<n;i++)v|=b[p++]<<(8*i)}else{for(let i=0;i<n;i++)v|=b[p++]<<(8*i);v|=(-1<<(8*n))}return [v,p]}
+function scan(b){let p=2,out=[],limit=Math.min(b.length,100000),counts={};if(b.length<2||b[0]!==4||b[1]!==8)return {valid:false,out,counts};function add(t,detail,at){counts[t]=(counts[t]||0)+1;out.push({at,t,detail})}
+while(p<limit&&out.length<2500){let at=p,c=b[p++],t=String.fromCharCode(c),detail='';if('TF0'.includes(t)){detail=t==='T'?'true':t==='F'?'false':'nil';add(t,detail,at);continue}
+if(t==='i'){let z=readLong(b,p);p=z[1];detail='integer '+z[0];add(t,detail,at);continue}
+if(t===':'){let z=readLong(b,p);p=z[1];let n=Math.max(0,Math.min(z[0]||0,2048));detail='symbol '+new TextDecoder().decode(b.slice(p,p+n));p+=n;add(t,detail,at);continue}
+if(t===';'){let z=readLong(b,p);p=z[1];add(t,'symbol link #'+z[0],at);continue}
+if(t==='"'||t==='f'||t==='/'){let z=readLong(b,p);p=z[1];let n=Math.max(0,Math.min(z[0]||0,4096));let s=new TextDecoder().decode(b.slice(p,p+n));p+=n;add(t,(t==='"'?'string':t==='f'?'float':'regexp')+' "'+s.slice(0,100)+'"',at);continue}
+if(t==='@'){let z=readLong(b,p);p=z[1];add(t,'object link #'+z[0],at);continue}
+if(t==='['||t==='{'||t==='}'){let z=readLong(b,p);p=z[1];add(t,(t==='['?'array':t==='}'?'hash with default':'hash')+' · '+z[0]+' entries',at);continue}
+if(t==='l'){let sign=b[p++],z=readLong(b,p);p=z[1];let n=Math.min(Math.max(z[0]||0,0),64);p+=n*2;add(t,'bignum · '+(sign===45?'-':'+')+' · '+z[0]+' words',at);continue}
+if(t==='o'||t==='S'||t==='I'||t==='U'||t==='u'||t==='c'||t==='m'||t==='M'){add(t,({o:'object',S:'struct',I:'instance variables wrapper',U:'user-marshal object',u:'user-defined object',c:'class',m:'module',M:'old module'}[t]||t)+' token (payload not expanded)',at);break}
+if(t==='}'){add(t,'hash',at);continue}
+add(t,'unknown token 0x'+c.toString(16).padStart(2,'0'),at);break
+}return {valid:true,out,counts,truncated:p<limit}}
+function render(){let ext=file.name.split('.').pop().toLowerCase(),res=scan(bytes);$('filebar').classList.add('show');$('filename').textContent=file.name;$('filemeta').textContent=human(bytes.length)+' · '+new Date(file.lastModified).toLocaleString('vi-VN');$('fmt').textContent='.'+ext;$('bytes').textContent=human(bytes.length);$('header').textContent=res.valid?'04 08':'Không chuẩn';$('summary').innerHTML='<div class="notice '+(res.valid?'good':'warn')+'">'+(res.valid?'Đã nhận diện header Ruby Marshal v4.8.':'Header không khớp Ruby Marshal v4.8.')+'</div><p><b>Tên file:</b> '+esc(file.name)+'</p><p><b>Phần mở rộng:</b> .'+ext+'</p><p><b>Kích thước:</b> '+human(bytes.length)+'</p><p><b>Byte mở đầu:</b> '+Array.from(bytes.slice(0,16)).map(x=>x.toString(16).padStart(2,'0')).join(' ')+'</p><p><b>Token nhận diện sơ bộ:</b> '+res.out.length+'</p>'+(res.truncated?'<p class="muted">Đã dừng phân tích sớm để tránh đọc sai payload nhị phân.</p>':'');rows=res.out;$('tree').innerHTML=rows.length?rows.map((x,i)=>'<div class="leaf" data-search="'+esc((x.t+' '+x.detail).toLowerCase())+'"><span class="muted">'+String(x.at).padStart(7,'0')+'</span><span class="type">'+esc(x.t)+'</span><span class="value">'+esc(x.detail)+'</span></div>').join(''):'<div class="empty">Không tìm thấy token. Header có thể không hợp lệ.</div>';
+let lines=[];for(let i=0;i<Math.min(bytes.length,4096);i+=16){let chunk=bytes.slice(i,i+16);let hx=Array.from(chunk).map(x=>x.toString(16).padStart(2,'0')).join(' ').padEnd(47,' ');let asc=Array.from(chunk).map(x=>x>=32&&x<127?String.fromCharCode(x):'.').join('');lines.push(i.toString(16).padStart(8,'0')+'  '+hx+'  '+asc)}$('hex').textContent=lines.join('\n');note(res.valid?'Đã mở file và nhận diện Ruby Marshal. Chế độ hiện tại chỉ kiểm tra cấu trúc; chưa ghi/chỉnh sửa nội dung.':'File đã mở nhưng header không khớp chuẩn Marshal 4.8.','warn')}
+$('filter').oninput=()=>{let q=$('filter').value.toLowerCase();[...$('tree').children].forEach(x=>x.style.display=x.dataset.search.includes(q)?'flex':'none')};
+$('close').onclick=()=>{file=bytes=null;rows=[];$('filebar').classList.remove('show');$('fmt').textContent='Chưa mở';$('bytes').textContent='—';$('header').textContent='—';$('summary').textContent='Chưa có file nào được mở.';$('tree').innerHTML='<div class="empty">Mở file để xem các token nhận diện được.</div>';$('hex').textContent='Chưa có dữ liệu.';note('Đã đóng file. File gốc trên thiết bị không bị thay đổi.')};
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+})();
+</script></body></html>
