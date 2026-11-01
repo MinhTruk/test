@@ -157,6 +157,69 @@ img,svg,canvas,a{-webkit-user-drag:none;user-drag:none}
 img{pointer-events:none;-webkit-touch-callout:none}
 ::selection{background:transparent}
 ::-moz-selection{background:transparent}
+
+/* ===== HEADER + NÚT README ===== */
+.topbar{position:fixed;top:4px;left:0;right:0;z-index:90;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:10px max(16px,env(safe-area-inset-right)) 10px max(16px,env(safe-area-inset-left));
+  background:linear-gradient(180deg,rgba(7,10,28,.82),rgba(7,10,28,0));pointer-events:none}
+.topbar>*{pointer-events:auto}
+.tb-brand{display:flex;align-items:center;gap:10px;color:#fff;text-decoration:none;font-weight:800;letter-spacing:2px;font-size:.9rem}
+.tb-mark{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;color:#0c1024;font-weight:900;font-size:.8rem;letter-spacing:-1px;
+  background:linear-gradient(135deg,var(--cy),#b6a1ff 55%,var(--mg));transform:rotate(-7deg)}
+.readme-btn{position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:0 18px;border-radius:99px;
+  color:#fff;text-decoration:none;font-weight:700;font-size:.82rem;letter-spacing:.03em;
+  border:1px solid rgba(255,255,255,.22);background:rgba(20,24,58,.85);
+  transition:transform .25s cubic-bezier(.2,.8,.2,1),border-color .25s,box-shadow .25s,background .25s}
+.readme-btn::after{content:"";position:absolute;top:0;left:-70%;width:45%;height:100%;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);transform:skewX(-20deg);transition:left .6s}
+.readme-btn:hover{transform:translateY(-2px);border-color:var(--cy);background:rgba(46,230,255,.14);box-shadow:0 10px 24px -10px rgba(46,230,255,.55)}
+.readme-btn:hover::after{left:130%}
+.readme-btn:active{transform:scale(.97)}
+.readme-btn:focus-visible,.tb-brand:focus-visible{outline:3px solid var(--cy);outline-offset:3px}
+.readme-btn svg{width:18px;height:18px;flex:none}
+.hero{padding-top:76px!important}
+@media (max-width:480px){.tb-brand span:last-child{display:none}.readme-btn{padding:0 14px}}
+
+/* ===== CỬA SỔ BONG BÓNG README ===== */
+.rm{position:fixed;inset:0;z-index:120;display:grid;place-items:center;padding:max(14px,env(safe-area-inset-top)) 14px max(14px,env(safe-area-inset-bottom))}
+.rm[hidden]{display:none}
+.rm-bg{position:absolute;inset:0;background:rgba(3,5,18,.62);animation:rmFade .25s ease both}
+.rm.closing .rm-bg{animation:rmFadeOut .2s ease both}
+.rm-box{position:relative;width:min(720px,100%);max-height:min(82vh,820px);display:flex;flex-direction:column;overflow:hidden;outline:none;
+  border-radius:28px;border:1px solid rgba(255,255,255,.2);
+  background:linear-gradient(160deg,rgba(32,38,88,.97),rgba(14,17,42,.98));
+  box-shadow:0 30px 80px rgba(0,0,0,.55),0 0 0 6px rgba(46,230,255,.06),0 0 40px rgba(138,91,255,.25);
+  transform-origin:var(--ox,90%) var(--oy,0%);animation:rmPop .42s cubic-bezier(.2,1.35,.4,1) both}
+.rm.closing .rm-box{animation:rmOut .2s ease-in both}
+@keyframes rmPop{0%{opacity:0;transform:scale(.15)}55%{opacity:1}100%{opacity:1;transform:none}}
+@keyframes rmOut{to{opacity:0;transform:scale(.3)}}
+@keyframes rmFade{from{opacity:0}}
+@keyframes rmFadeOut{to{opacity:0}}
+.rm-h{display:flex;align-items:center;gap:10px;padding:14px 14px 12px 20px;border-bottom:1px solid rgba(255,255,255,.1)}
+.rm-h h2{flex:1;min-width:0;font-size:1rem;font-weight:800;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rm-gh{flex:none;color:var(--cy);text-decoration:none;font-size:.78rem;font-weight:600;padding:8px 12px;border-radius:99px;border:1px solid rgba(46,230,255,.35)}
+.rm-gh:hover{background:rgba(46,230,255,.12)}
+.rm-x{flex:none;width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);color:#fff;font-size:1rem;cursor:pointer;transition:background .2s,transform .2s}
+.rm-x:hover{background:rgba(255,61,166,.3);transform:rotate(90deg)}
+.rm-x:focus-visible,.rm-gh:focus-visible{outline:3px solid var(--cy);outline-offset:2px}
+.rm-body{padding:18px 22px 24px;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;color:#d4daf7;font-size:.95rem;line-height:1.75}
+.rm-body h1,.rm-body h2,.rm-body h3,.rm-body h4{color:#fff;line-height:1.25;margin:1.1em 0 .45em}
+.rm-body h1{font-size:1.6rem;margin-top:.2em}.rm-body h2{font-size:1.3rem}.rm-body h3{font-size:1.1rem}.rm-body h4{font-size:1rem}
+.rm-body p{margin:.6em 0}
+.rm-body a{color:var(--cy)}
+.rm-body ul,.rm-body ol{margin:.6em 0 .6em 1.4em}
+.rm-body li{margin:.25em 0}
+.rm-body code{font-family:ui-monospace,Consolas,monospace;font-size:.88em;padding:2px 6px;border-radius:6px;background:rgba(255,255,255,.1)}
+.rm-body pre{margin:.8em 0;padding:14px;border-radius:14px;background:rgba(0,0,0,.35);overflow-x:auto}
+.rm-body pre code{padding:0;background:none}
+.rm-body blockquote{margin:.8em 0;padding:.2em 14px;border-left:3px solid var(--vi);color:#b9c0ea}
+.rm-body hr{border:0;height:1px;background:rgba(255,255,255,.14);margin:1.2em 0}
+.rm-body img{max-width:100%;height:auto;border-radius:10px}
+.rm-msg{text-align:center;color:var(--mut);padding:24px 0}
+.rm-msg a{display:inline-block;margin-top:10px}
+.rm-dots{display:inline-block;width:1.4em;text-align:left}
+@media (max-width:600px){.rm{place-items:end center}.rm-box{border-radius:26px;max-height:86vh}.rm-gh{display:none}.rm-body{padding:16px 18px 22px}}
+@media (prefers-reduced-motion:reduce){.rm-bg,.rm-box,.rm.closing .rm-box,.rm.closing .rm-bg{animation:none}}
 </style>
 </head>
 <body>
@@ -164,6 +227,14 @@ img{pointer-events:none;-webkit-touch-callout:none}
 <canvas id="fx"></canvas>
 <div id="blobs"></div>
 <div id="curtain"><i></i><i></i><i></i><i></i><i></i></div>
+
+<header class="topbar">
+  <a class="tb-brand" href="#" aria-label="SaveLab"><span class="tb-mark">SL</span><span>SAVELAB</span></a>
+  <a class="readme-btn" id="rmBtn" aria-haspopup="dialog" href="https://github.com/MinhTruk/test/blob/main/README.md" target="_blank" rel="noopener noreferrer" title="Đọc README.md trên GitHub">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h12v17H6a2 2 0 0 0-2 2z"/><path d="M8 7h6M8 11h6"/></svg>
+    Đọc README
+  </a>
+</header>
 
 <div class="wrap">
   <header class="hero">
@@ -186,6 +257,18 @@ img{pointer-events:none;-webkit-touch-callout:none}
     </nav>
     <div class="f-copy">© <span id="year"></span> SaveLab · MinhTruk</div>
   </footer>
+</div>
+
+<div class="rm" id="rm" hidden>
+  <div class="rm-bg" data-close></div>
+  <section class="rm-box" id="rmBox" role="dialog" aria-modal="true" aria-labelledby="rmT" tabindex="-1">
+    <header class="rm-h">
+      <h2 id="rmT">📖 README.md</h2>
+      <a class="rm-gh" href="https://github.com/MinhTruk/test/blob/main/README.md" target="_blank" rel="noopener noreferrer">Mở trên GitHub ↗</a>
+      <button class="rm-x" type="button" data-close aria-label="Đóng">✕</button>
+    </header>
+    <div class="rm-body" id="rmBody"><p class="rm-msg">Đang tải…</p></div>
+  </section>
 </div>
 
 <script>
@@ -400,6 +483,88 @@ document.querySelectorAll(".art img").forEach(im=>{
   },true);
   /* nếu có vùng đang bị chọn thì bỏ chọn ngay */
   document.addEventListener("selectionchange",()=>{const s=getSelection();if(s&&!s.isCollapsed)s.removeAllRanges()});
+})();
+
+/* ===== README dạng bong bóng: tải sẵn nền → bấm là hiện ngay ===== */
+(function(){
+  const RAW="https://raw.githubusercontent.com/MinhTruk/test/main/",GH="https://github.com/MinhTruk/test/blob/main/";
+  const btn=document.getElementById("rmBtn"),root=document.getElementById("rm"),box=document.getElementById("rmBox"),body=document.getElementById("rmBody");
+  let html=null,loading=null,last=null,closeT=0;
+
+  const esc=t=>t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  const abs=(u,base)=>/^https?:\/\//i.test(u)?u:(/^[a-z][a-z0-9+.-]*:/i.test(u)||u[0]==="#"?"":base+u.replace(/^\.?\//,""));
+  function inl(t){
+    t=esc(t);
+    t=t.replace(/`([^`]+)`/g,"<code>$1</code>");
+    t=t.replace(/!\[([^\]]*)\]\(([^)\s]+)[^)]*\)/g,(m,a,u)=>{u=abs(u,RAW);return u?`<img alt="${a}" src="${u}" loading="lazy" decoding="async" referrerpolicy="no-referrer">`:""});
+    t=t.replace(/\[([^\]]+)\]\(([^)\s]+)[^)]*\)/g,(m,a,u)=>{u=abs(u,GH);return u?`<a href="${u}" target="_blank" rel="noopener noreferrer">${a}</a>`:a});
+    t=t.replace(/\*\*([^*]+)\*\*/g,"<strong>$1</strong>").replace(/(^|[^*\w])\*([^*]+)\*/g,"$1<em>$2</em>");
+    return t;
+  }
+  function md(src){
+    const L=src.replace(/\r\n?/g,"\n").split("\n"),o=[];let i=0;
+    while(i<L.length){
+      const l=L[i];
+      if(/^\s*```/.test(l)){const b=[];i++;while(i<L.length&&!/^\s*```/.test(L[i]))b.push(L[i++]);i++;o.push("<pre><code>"+esc(b.join("\n"))+"</code></pre>");continue}
+      let m;
+      if((m=l.match(/^(#{1,4})\s+(.*)$/))){o.push(`<h${m[1].length}>${inl(m[2])}</h${m[1].length}>`);i++;continue}
+      if(/^\s*([-*_])(\s*\1){2,}\s*$/.test(l)){o.push("<hr>");i++;continue}
+      if(/^\s*>/.test(l)){const b=[];while(i<L.length&&/^\s*>/.test(L[i]))b.push(L[i++].replace(/^\s*>\s?/,""));o.push("<blockquote>"+inl(b.join(" "))+"</blockquote>");continue}
+      if(/^\s*([-*+]|\d+\.)\s+/.test(l)){
+        const ord=/^\s*\d+\./.test(l),b=[];
+        while(i<L.length&&/^\s*([-*+]|\d+\.)\s+/.test(L[i]))b.push("<li>"+inl(L[i++].replace(/^\s*([-*+]|\d+\.)\s+/,""))+"</li>");
+        o.push((ord?"<ol>":"<ul>")+b.join("")+(ord?"</ol>":"</ul>"));continue}
+      if(!l.trim()){i++;continue}
+      const b=[];
+      while(i<L.length&&L[i].trim()&&!/^(\s*```|#{1,4}\s|\s*>|\s*([-*+]|\d+\.)\s+)/.test(L[i]))b.push(L[i++]);
+      o.push("<p>"+inl(b.join(" "))+"</p>");
+    }
+    return o.join("");
+  }
+
+  function load(){
+    if(html!==null)return Promise.resolve();
+    if(loading)return loading;
+    loading=fetch(RAW+"README.md",{cache:"no-cache"}).then(r=>{if(!r.ok)throw 0;return r.text()})
+      .then(t=>{html=t.trim()?md(t):'<p class="rm-msg">README.md đang trống.</p>';body.innerHTML=html})
+      .catch(()=>{body.innerHTML='<p class="rm-msg">Không tải được README.<br><a href="'+GH+'README.md" target="_blank" rel="noopener noreferrer">Mở trên GitHub ↗</a></p>'})
+      .finally(()=>{loading=null});
+    return loading;
+  }
+  /* tải sẵn khi trình duyệt rảnh để lúc bấm là có nội dung ngay */
+  (window.requestIdleCallback||(f=>setTimeout(f,1200)))(load);
+
+  function open(e){
+    clearTimeout(closeT);
+    last=document.activeElement;
+    const r=btn.getBoundingClientRect();
+    root.hidden=false;root.classList.remove("closing");
+    const b=box.getBoundingClientRect();
+    box.style.setProperty("--ox",Math.max(0,Math.min(b.width,r.left+r.width/2-b.left))+"px");
+    box.style.setProperty("--oy",Math.max(0,Math.min(b.height,r.top+r.height/2-b.top))+"px");
+    if(html!==null)body.innerHTML=html;else{body.innerHTML='<p class="rm-msg">Đang tải…</p>';load()}
+    body.scrollTop=0;
+    document.documentElement.style.overflow="hidden";
+    box.focus({preventScroll:true});
+  }
+  function close(){
+    if(root.hidden||root.classList.contains("closing"))return;
+    root.classList.add("closing");
+    closeT=setTimeout(()=>{root.hidden=true;root.classList.remove("closing");document.documentElement.style.overflow="";
+      if(last&&last.focus)last.focus({preventScroll:true})},matchMedia("(prefers-reduced-motion:reduce)").matches?0:200);
+  }
+  btn.addEventListener("click",e=>{if(e.ctrlKey||e.metaKey||e.shiftKey||e.button)return;e.preventDefault();open()});
+  root.addEventListener("click",e=>{if(e.target.closest("[data-close]"))close()});
+  document.addEventListener("keydown",e=>{
+    if(root.hidden)return;
+    if(e.key==="Escape"){close();return}
+    if(e.key==="Tab"){ /* giữ focus trong cửa sổ */
+      const f=[...box.querySelectorAll("a[href],button")].filter(x=>x.offsetParent);
+      if(!f.length)return;const a=f[0],z=f[f.length-1];
+      if(e.shiftKey&&(document.activeElement===a||document.activeElement===box)){e.preventDefault();z.focus()}
+      else if(!e.shiftKey&&document.activeElement===z){e.preventDefault();a.focus()}
+    }
+  });
 })();
 </script>
 </body>
