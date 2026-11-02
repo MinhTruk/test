@@ -1,26 +1,607 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" id="htmlRoot">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Công cụ 5 – SaveLab</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#070a1c">
+<title>Multi-Language Obfuscator | SaveLab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0}
-body{min-height:100vh;display:grid;place-items:center;text-align:center;color:#eef1ff;font-family:"Lexend","Segoe UI",Roboto,system-ui,sans-serif;
-background:radial-gradient(900px 600px at 20% 0%,#1b1f5e,transparent 60%),radial-gradient(800px 600px at 100% 100%,#4a0f48,transparent 55%),#070a1c;overflow:hidden}
-.ring{width:140px;height:140px;margin:0 auto 26px;border-radius:50%;border:6px solid transparent;border-top-color:#2ee6ff;border-right-color:#ff3da6;animation:r 1.4s linear infinite;box-shadow:0 0 40px rgba(46,230,255,.4)}
-@keyframes r{to{transform:rotate(360deg)}}
-h1{font-size:clamp(2rem,6vw,3.6rem);animation:in .8s cubic-bezier(.2,1.4,.4,1) both}
-p{color:#9aa4d6;margin:12px 0 28px}
-a{display:inline-block;color:#fff;text-decoration:none;font-weight:800;padding:13px 28px;border-radius:14px;background:linear-gradient(110deg,#8a5bff,#ff3da6);transition:transform .2s}
-a:hover{transform:scale(1.07)}
-@keyframes in{from{opacity:0;transform:translateY(-40px) scale(.6)}}
+:root{color-scheme:dark;--bg:#070a1c;--ink:#eef1ff;--mut:#9aa4d6;--cy:#2ee6ff;--mg:#ff3da6;--am:#ffc247;--vi:#8a5bff;--ok:#3dffb0;--bad:#ff6b8b;--line:rgba(255,255,255,.14);--field:#080d22;--glass:linear-gradient(160deg,rgba(255,255,255,.09),rgba(255,255,255,.025));--grad:linear-gradient(110deg,var(--vi),var(--mg) 55%,var(--am))}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;min-height:100vh;color:var(--ink);font-family:"Lexend","Segoe UI",Roboto,system-ui,sans-serif;font-size:15px;line-height:1.5;
+  background:radial-gradient(1200px 800px at 20% -10%,#1b1f5e 0%,transparent 60%),radial-gradient(1000px 700px at 100% 10%,#4a0f48 0%,transparent 55%),var(--bg);background-attachment:fixed}
+#fx{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.topbar{position:relative;z-index:3;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px clamp(16px,4vw,40px);flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px;font-weight:900;font-size:1.25rem;letter-spacing:-.01em}
+.brand img{width:40px;height:40px;border-radius:50%;display:block}
+.tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.home,.icon-btn{position:relative;overflow:hidden;color:var(--ink);text-decoration:none;font-weight:800;padding:9px 18px;border-radius:99px;border:1px solid var(--line);background:rgba(255,255,255,.06);transition:transform .2s,border-color .2s;cursor:pointer}
+.icon-btn{padding:9px 14px;font-size:.78rem}
+.home:hover,.icon-btn:hover{transform:scale(1.05);border-color:var(--cy)}
+.home:focus-visible,.icon-btn:focus-visible,button:focus-visible,a:focus-visible,select:focus-visible{outline:3px solid var(--cy);outline-offset:3px}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer;color:var(--ink);border:1px solid var(--line);background:rgba(255,255,255,.07);border-radius:12px;padding:10px 15px;font-weight:700;transition:transform .2s,border-color .2s,background .2s}
+button:hover{border-color:var(--cy);transform:translateY(-1px)}
+button:active{transform:scale(.97)}
+button:disabled{opacity:.4;cursor:not-allowed}
+button:disabled:hover{transform:none;border-color:var(--line)}
+button.primary,button.green{position:relative;overflow:hidden;border:0;color:#fff;font-weight:800;background:var(--grad)}
+button.green{background:linear-gradient(110deg,#0f9d78,#2ee6ff)}
+button.primary::after,button.green::after{content:"";position:absolute;top:0;left:-70%;width:45%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.6),transparent);transform:skewX(-20deg);transition:left .7s;pointer-events:none}
+button.primary:hover::after,button.green:hover::after{left:130%}
+button.primary:disabled::after{display:none}
+input[type=text],input[type=password],input:not([type]),select,textarea{background:var(--field);color:var(--ink);border:1px solid var(--line);border-radius:12px;outline:none;transition:border-color .2s,box-shadow .2s}
+input:focus,select:focus,textarea:focus{border-color:var(--cy);box-shadow:0 0 0 3px rgba(46,230,255,.18)}
+select option{background:#0d1230}
+.panel{background:var(--glass);border:1px solid var(--line);border-radius:22px;box-shadow:0 20px 50px -20px rgba(0,0,0,.7)}
+.gtext{background:linear-gradient(180deg,#fff 10%,var(--cy) 60%,var(--mg) 120%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.rise{opacity:0;animation:rise .6s ease-out forwards}
+@keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+#curtain{position:fixed;inset:0;z-index:99;pointer-events:none;display:grid;grid-template-columns:repeat(5,1fr)}
+#curtain i{background:linear-gradient(180deg,var(--vi),var(--mg));transform:scaleY(0);transform-origin:bottom;transition:transform .5s cubic-bezier(.7,0,.3,1)}
+#curtain.go i{transform:scaleY(1)}
+#curtain i:nth-child(2){transition-delay:.05s}#curtain i:nth-child(3){transition-delay:.1s}#curtain i:nth-child(4){transition-delay:.15s}#curtain i:nth-child(5){transition-delay:.2s}
+
+main{position:relative;z-index:2;max-width:1000px;margin:auto;padding:6px 16px 60px}
+header.head{margin:8px 0 22px}
+h1{font-size:clamp(2.2rem,7vw,3.8rem);line-height:1.05;letter-spacing:-.02em;font-weight:900;margin:0 0 8px}
+.subtitle{color:var(--mut);margin:0}
+.panel{padding:22px;margin:16px 0}
+.panel:nth-of-type(1){animation-delay:.05s}.panel:nth-of-type(2){animation-delay:.15s}.panel:nth-of-type(3){animation-delay:.25s}
+.panel-title{font-weight:800;font-size:1.1rem;margin:0 0 14px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.field{flex:1;min-width:180px}
+label{display:block;font-weight:700;margin-bottom:7px}
+input[type=password],input[type=text],select{width:100%;padding:11px 13px}
+.muted,.note{color:var(--mut)}
+.pill{border:1px solid var(--line);padding:4px 11px;border-radius:99px;background:rgba(255,255,255,.04);font-size:13px}
+.meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;color:var(--mut);font-size:13px}
+input[type=file]{display:none}
+.file-btn{position:relative;overflow:hidden}
+textarea{width:100%;min-height:330px;resize:vertical;padding:16px;color:#d6e6ff;font:13px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace}
+.status{margin-top:14px;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--mut);white-space:pre-wrap;overflow-wrap:anywhere}
+.status.ok{color:var(--ok);border-color:rgba(61,255,176,.35)}
+.status.err{color:var(--bad);border-color:rgba(255,107,139,.4)}
+.status.warn{color:var(--am);border-color:rgba(255,194,71,.4)}
+.note{font-size:12.5px;margin:14px 0 0}
+.hidden{display:none!important}
+
+/* ô chọn tuỳ chọn (lua engine) */
+.optgrid{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.optchip{min-width:150px;flex:1;background:var(--field);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.optchip span{display:block;font-size:.68rem;color:var(--mut);text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:6px}
+.optchip select{width:100%;padding:8px 10px;border:1px solid transparent;background:transparent;padding-left:0}
+.optchip select:focus{box-shadow:none;border-color:transparent}
+
+/* checkbox tuỳ chọn (ngôn ngữ khác) */
+.options{display:flex;gap:18px;flex-wrap:wrap;margin-top:14px}
+.check{display:flex;gap:8px;align-items:center;color:var(--mut);font-weight:500;margin:0}
+.check input{accent-color:var(--cy)}
+.check.disabledopt{opacity:.4}
+
+.stat{font-size:13px;color:var(--mut)}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(15px);opacity:0;pointer-events:none;background:var(--ok);color:#04130d;padding:9px 18px;border-radius:99px;font-size:.82rem;font-weight:800;transition:opacity .25s,transform .25s;z-index:10}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* cổng đăng nhập cục bộ */
+#authGate{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(700px 500px at 50% 30%,rgba(138,91,255,.18),transparent 65%),rgba(4,6,16,.78);backdrop-filter:blur(6px)}
+#authGate.hidden{display:none}
+.authBox{width:100%;max-width:380px;padding:26px}
+.authBox h2{margin:0 0 4px;font-size:1.15rem;font-weight:800}
+.authBox p{margin:0 0 16px;color:var(--mut);font-size:.82rem}
+.authBox input{width:100%;margin-bottom:10px;padding:11px 13px}
+.authBox .row{margin-top:4px;justify-content:space-between}
+.authBox .row button{flex:1}
+.authErr{color:var(--bad);font-size:.78rem;min-height:1.1em;margin:0 0 6px}
+main.locked{filter:blur(6px);pointer-events:none;user-select:none}
+
+.footer{margin:30px 0 4px;text-align:center;color:#7e86ad;font-size:.78rem}
+.f-links{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 18px;margin-top:8px}
+.f-links a{padding:6px 2px;color:#cfd6ff;text-decoration:none}
+.f-links a:hover{color:var(--cy)}
+
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}.rise{opacity:1}}
+@media(max-width:620px){.panel{padding:16px}textarea{min-height:270px}.row button{flex:1}.optchip{min-width:46%}.tools{width:100%;justify-content:flex-end}}
 </style>
 </head>
 <body>
-<div><div class="ring"></div><h1>Công cụ 5</h1><p>Trang này đang chờ nội dung. Sẽ cập nhật sau.</p><a href="index.html">Về trang chủ</a></div>
+<canvas id="fx"></canvas>
+<div id="curtain"><i></i><i></i><i></i><i></i><i></i></div>
+
+<div id="authGate">
+  <div class="authBox panel">
+    <h2 id="authTitle">Đăng nhập</h2>
+    <p id="authSub">Cần tài khoản để dùng công cụ. Dữ liệu lưu cục bộ trên trình duyệt này, không gửi lên máy chủ.</p>
+    <div class="authErr" id="authErr"></div>
+    <input type="text" id="authUser" placeholder="Tên đăng nhập" autocomplete="username">
+    <input type="password" id="authPass" placeholder="Mật khẩu" autocomplete="current-password">
+    <div class="row">
+      <button class="primary" id="authGo" type="button">Đăng nhập</button>
+      <button id="authSwitch" type="button">Tạo tài khoản</button>
+    </div>
+  </div>
+</div>
+
+<div class="topbar rise">
+  <div class="brand"><img data-art="77,200,120,120" width="40" height="40" alt=""><span>SaveLab</span></div>
+  <div class="tools">
+    <button class="icon-btn" id="whoBtn" type="button" title="Tài khoản">·</button>
+    <button class="icon-btn" id="langBtn" type="button">VI / EN</button>
+    <a class="home" href="index.html">Trang chủ</a>
+  </div>
+</div>
+
+<main id="wrap" class="locked">
+<header class="head rise" style="animation-delay:.02s">
+  <h1 class="gtext">Multi-Language Obfuscator</h1>
+  <p class="subtitle" id="tagline">Làm rối mã nguồn Lua, JavaScript, HTML, CSS và JSON ngay trong trình duyệt. Lua dùng engine v3 nhiều lớp XOR + rotate + S-box với loader kiểu VM. Xử lý hoàn toàn cục bộ, không gửi dữ liệu lên mạng.</p>
+</header>
+
+<section class="panel rise">
+  <p class="panel-title" id="lblInput">1. Ngôn ngữ &amp; mã nguồn</p>
+  <div class="row">
+    <div class="field">
+      <label for="language" id="lblLang">Ngôn ngữ</label>
+      <select id="language">
+        <option value="lua">Lua</option>
+        <option value="javascript">JavaScript</option>
+        <option value="html">HTML</option>
+        <option value="css">CSS</option>
+        <option value="json">JSON</option>
+      </select>
+    </div>
+  </div>
+  <p class="muted" id="engineInfo" style="margin:10px 0 0">Lua engine v3 · XOR + rotate + S-box, VM dispatch loader</p>
+  <div class="row" style="margin-top:16px">
+    <button class="file-btn" id="fileLabel" type="button">Mở file<input type="file" id="fileIn" accept=".lua,.txt"></button>
+    <button id="clearBtn" type="button">Xóa nội dung</button>
+    <span class="stat" id="inStat"></span>
+  </div>
+  <textarea id="source" spellcheck="false" placeholder="-- dán code của bạn vào đây"></textarea>
+</section>
+
+<section class="panel rise">
+  <p class="panel-title" id="lblOptions">2. Tùy chọn xử lý</p>
+
+  <div class="optgrid" id="luaOptions">
+    <div class="optchip"><span id="l1">Số lớp</span><select id="layers"><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option><option value="4">4</option></select></div>
+    <div class="optchip"><span id="l2">Độ dài khoá</span><select id="keylen"><option value="8">8</option><option value="16" selected>16</option><option value="32">32</option></select></div>
+    <div class="optchip"><span id="l3">Junk code</span><select id="junk"><option value="0" id="l3a">Tắt</option><option value="1" selected id="l3b">Bật</option></select></div>
+    <div class="optchip"><span id="l4">Bit-rotation</span><select id="rot"><option value="0" id="l4a">Tắt</option><option value="1" selected id="l4b">Bật</option></select></div>
+    <div class="optchip"><span id="l5">Chia khối</span><select id="chunks"><option value="1">1</option><option value="4" selected>4</option><option value="8">8</option></select></div>
+    <div class="optchip"><span id="l6">Checksum</span><select id="checksum"><option value="0" id="l6a">Tắt</option><option value="1" selected id="l6b">Bật</option></select></div>
+    <div class="optchip"><span id="l7">S-box</span><select id="sbox"><option value="0" id="l7a">Tắt</option><option value="1" selected id="l7b">Bật</option></select></div>
+  </div>
+
+  <div class="options hidden" id="genOptions">
+    <label class="check" id="compactWrap"><input type="checkbox" id="compact" checked><span id="optCompact">Nén khoảng trắng / comment</span></label>
+    <label class="check" id="stringsWrap"><input type="checkbox" id="strings" checked><span id="optStrings">Mã hóa chuỗi (nếu hỗ trợ)</span></label>
+    <label class="check" id="junkWrap"><input type="checkbox" id="junk2"><span id="optJunk">Thêm nhiễu an toàn</span></label>
+  </div>
+
+  <div class="row" style="margin-top:16px">
+    <button class="primary" id="runBtn" type="button">Obfuscate</button>
+    <span class="stat" id="timeStat"></span>
+  </div>
+</section>
+
+<section class="panel rise">
+  <div class="row" style="justify-content:space-between;margin-bottom:12px">
+    <p class="panel-title" style="margin:0" id="lblOutput">3. Kết quả</p>
+    <span class="muted" id="outStat">Chưa có kết quả</span>
+  </div>
+  <textarea id="output" spellcheck="false" readonly placeholder="Kết quả sẽ hiện ở đây..."></textarea>
+  <div class="row" style="margin-top:14px">
+    <button class="primary" id="copyBtn" type="button">Copy</button>
+    <button class="green" id="dlBtn" type="button">Tải xuống</button>
+  </div>
+  <p class="note" id="warnNote">Obfuscation chỉ làm code khó đọc hơn, không phải mã hóa bảo mật. Hãy giữ bản gốc và kiểm tra kết quả trong môi trường thử nghiệm trước khi dùng thật.</p>
+</section>
+
+<footer class="footer rise">
+  <nav class="f-links" aria-label="Pháp lý">
+    <a href="index.html">Trang chủ</a>
+    <a href="terms-of-service.html">Điều khoản dịch vụ</a>
+    <a href="privacy-policy.html">Chính sách bảo mật</a>
+  </nav>
+</footer>
+</main>
+
+<div class="toast" id="toast">Đã copy</div>
+
+<script>
+(function(){
+"use strict";
+const $=id=>document.getElementById(id);
+
+/* ============ CỔNG ĐĂNG NHẬP CỤC BỘ ============
+   Không có backend thật — tài khoản lưu trong localStorage của
+   trình duyệt này (đã hash SHA-256, không lưu mật khẩu dạng thường).
+   Đây là khoá truy cập cục bộ, không phải hệ thống nhiều thiết bị. */
+const AUTHKEY='__mlo_acc';
+async function sha256(str){
+  const buf=await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+function loadUsers(){try{return JSON.parse(localStorage.getItem(AUTHKEY)||'{}')}catch(e){return{}}}
+function saveUsers(u){localStorage.setItem(AUTHKEY,JSON.stringify(u))}
+let authMode='login';
+const gate=$('authGate'), wrapEl=$('wrap');
+function setAuthErr(t){$('authErr').textContent=t||''}
+function paintAuthMode(){
+  const d=DICT[uiLang];
+  $('authTitle').textContent=authMode==='login'?d.authLogin:d.authRegister;
+  $('authSub').textContent=d.authSub;
+  $('authGo').textContent=authMode==='login'?d.authGoLogin:d.authGoRegister;
+  $('authSwitch').textContent=authMode==='login'?d.authSwitchToReg:d.authSwitchToLogin;
+}
+$('authSwitch').addEventListener('click',()=>{authMode=authMode==='login'?'register':'login';setAuthErr('');paintAuthMode()});
+$('authGo').addEventListener('click', async ()=>{
+  const u=$('authUser').value.trim(), p=$('authPass').value;
+  const d=DICT[uiLang];
+  if(!u||!p){setAuthErr(d.authErrEmpty);return}
+  const users=loadUsers();
+  if(authMode==='register'){
+    if(users[u]){setAuthErr(d.authErrExists);return}
+    users[u]={hash:await sha256(p),created:Date.now()};saveUsers(users);sessionOpen(u);
+  }else{
+    const rec=users[u];
+    if(!rec||rec.hash!==await sha256(p)){setAuthErr(d.authErrBad);return}
+    sessionOpen(u);
+  }
+});
+function sessionOpen(u){
+  sessionStorage.setItem('__mlo_sess',u);
+  gate.classList.add('hidden');wrapEl.classList.remove('locked');
+  $('whoBtn').textContent=u;
+}
+function sessionCheck(){
+  const u=sessionStorage.getItem('__mlo_sess'),users=loadUsers();
+  if(u&&users[u]){gate.classList.add('hidden');wrapEl.classList.remove('locked');$('whoBtn').textContent=u}
+}
+$('whoBtn').addEventListener('click',()=>{
+  sessionStorage.removeItem('__mlo_sess');
+  gate.classList.remove('hidden');wrapEl.classList.add('locked');
+  $('authUser').value='';$('authPass').value='';setAuthErr('');paintAuthMode();
+});
+
+/* ============ NGÔN NGỮ GIAO DIỆN (VI/EN) ============ */
+const DICT={
+  vi:{
+    tagline:"Làm rối mã nguồn Lua, JavaScript, HTML, CSS và JSON ngay trong trình duyệt. Lua dùng engine v3 nhiều lớp XOR + rotate + S-box với loader kiểu VM. Xử lý hoàn toàn cục bộ, không gửi dữ liệu lên mạng.",
+    lblInput:"1. Ngôn ngữ & mã nguồn", lblLang:"Ngôn ngữ", lblOptions:"2. Tùy chọn xử lý", lblOutput:"3. Kết quả",
+    fileLabel:"Mở file", clearBtn:"Xóa nội dung", runBtn:"Obfuscate", copyBtn:"Copy", dlBtn:"Tải xuống",
+    l1:"Số lớp", l2:"Độ dài khoá", l3:"Junk code", l4:"Bit-rotation", l5:"Chia khối", l6:"Checksum", l7:"S-box",
+    l3a:"Tắt", l3b:"Bật", l4a:"Tắt", l4b:"Bật", l6a:"Tắt", l6b:"Bật", l7a:"Tắt", l7b:"Bật",
+    optCompact:"Nén khoảng trắng / comment", optStrings:"Mã hóa chuỗi (nếu hỗ trợ)", optJunk:"Thêm nhiễu an toàn",
+    toast:"Đã copy", charUnit:"ký tự", noResult:"Chưa có kết quả",
+    placeholderSrc:"-- dán code của bạn vào đây", placeholderOut:"Kết quả sẽ hiện ở đây...",
+    warnNote:"Obfuscation chỉ làm code khó đọc hơn, không phải mã hóa bảo mật. Hãy giữ bản gốc và kiểm tra kết quả trong môi trường thử nghiệm trước khi dùng thật.",
+    authLogin:"Đăng nhập", authRegister:"Tạo tài khoản", authSub:"Cần tài khoản để dùng công cụ. Dữ liệu lưu cục bộ trên trình duyệt này, không gửi lên máy chủ.",
+    authGoLogin:"Đăng nhập", authGoRegister:"Tạo tài khoản",
+    authSwitchToReg:"Tạo tài khoản", authSwitchToLogin:"Đã có tài khoản? Đăng nhập",
+    authErrEmpty:"Nhập đủ tên đăng nhập và mật khẩu", authErrExists:"Tên đăng nhập đã tồn tại", authErrBad:"Sai tên đăng nhập hoặc mật khẩu"
+  },
+  en:{
+    tagline:"Obfuscate Lua, JavaScript, HTML, CSS and JSON source code right in your browser. Lua uses the v3 engine — multi-layer XOR + rotate + S-box with a VM-style loader. Everything runs locally, nothing is sent anywhere.",
+    lblInput:"1. Language & source", lblLang:"Language", lblOptions:"2. Processing options", lblOutput:"3. Result",
+    fileLabel:"Open file", clearBtn:"Clear", runBtn:"Obfuscate", copyBtn:"Copy", dlBtn:"Download",
+    l1:"Layers", l2:"Key length", l3:"Junk code", l4:"Bit-rotation", l5:"Chunks", l6:"Checksum", l7:"S-box",
+    l3a:"Off", l3b:"On", l4a:"Off", l4b:"On", l6a:"Off", l6b:"On", l7a:"Off", l7b:"On",
+    optCompact:"Strip whitespace / comments", optStrings:"Encode strings (if supported)", optJunk:"Add safe noise",
+    toast:"Copied", charUnit:"chars", noResult:"No result yet",
+    placeholderSrc:"-- paste your code here", placeholderOut:"Result will appear here...",
+    warnNote:"Obfuscation only makes code harder to read, it is not real encryption. Keep the original file and test the result before using it for real.",
+    authLogin:"Log in", authRegister:"Create account", authSub:"An account is required. Data is stored locally in this browser only.",
+    authGoLogin:"Log in", authGoRegister:"Create account",
+    authSwitchToReg:"Create account", authSwitchToLogin:"Have an account? Log in",
+    authErrEmpty:"Enter a username and password", authErrExists:"Username already taken", authErrBad:"Wrong username or password"
+  }
+};
+/* thông tin & gợi ý riêng cho từng ngôn ngữ, theo ngôn ngữ giao diện */
+const ENGINE_INFO={
+  lua:{vi:["Lua engine v3 · XOR + rotate + S-box, VM dispatch loader","Lua: nhiều lớp XOR/rotate xen S-box, loader dùng bảng lệnh (VM dispatch) để giải mã khi chạy. Cần môi trường hỗ trợ loadstring hoặc load."],
+       en:["Lua engine v3 · XOR + rotate + S-box, VM dispatch loader","Lua: multiple XOR/rotate layers interleaved with an S-box, decoded at runtime by a VM-dispatch loader. Needs an environment with loadstring or load."]},
+  javascript:{vi:["JavaScript engine · Encoded runtime wrapper","JavaScript: đóng gói mã nguồn thành UTF-8 Base64 và tạo wrapper giải mã khi chạy. Wrapper dùng eval, có thể bị CSP chặn."],
+       en:["JavaScript engine · Encoded runtime wrapper","JavaScript: packs the source as UTF-8 Base64 inside a wrapper that decodes it at runtime. The wrapper uses eval, which some CSPs block."]},
+  html:{vi:["HTML engine · Encoded document wrapper","HTML: đóng gói nội dung thành Base64 trong trang HTML tự giải mã và ghi nội dung ra document."],
+       en:["HTML engine · Encoded document wrapper","HTML: packs the document as Base64 inside a page that decodes and writes it back out on load."]},
+  css:{vi:["CSS engine · Minifier","CSS: loại bỏ comment và nén định dạng; giữ nguyên cấu trúc selector/property để hạn chế phá vỡ giao diện."],
+       en:["CSS engine · Minifier","CSS: strips comments and whitespace while keeping selectors/properties intact so the layout still works."]},
+  json:{vi:["JSON engine · Minifier + Unicode escaping","JSON: kiểm tra cú pháp, nén dữ liệu và có thể chuyển ký tự trong chuỗi sang dạng Unicode escape."],
+       en:["JSON engine · Minifier + Unicode escaping","JSON: validates syntax, minifies the data and can turn string characters into Unicode escapes."]}
+};
+const ACCEPT={lua:'.lua,.txt',javascript:'.js,.mjs,.cjs,.txt',html:'.html,.htm,.txt',css:'.css,.txt',json:'.json,.txt'};
+const RELEVANT={javascript:{compact:false,strings:true,junk:true},html:{compact:false,strings:false,junk:false},css:{compact:true,strings:false,junk:false},json:{compact:true,strings:true,junk:false}};
+let uiLang='vi';
+
+function applyUiLang(){
+  const d=DICT[uiLang];
+  $('tagline').textContent=d.tagline;
+  $('lblInput').textContent=d.lblInput; $('lblLang').textContent=d.lblLang;
+  $('lblOptions').textContent=d.lblOptions; $('lblOutput').textContent=d.lblOutput;
+  $('fileLabel').childNodes[0].nodeValue=d.fileLabel;
+  $('clearBtn').textContent=d.clearBtn; $('runBtn').textContent=d.runBtn;
+  $('copyBtn').textContent=d.copyBtn; $('dlBtn').textContent=d.dlBtn;
+  $('l1').textContent=d.l1;$('l2').textContent=d.l2;$('l3').textContent=d.l3;$('l4').textContent=d.l4;
+  $('l5').textContent=d.l5;$('l6').textContent=d.l6;$('l7').textContent=d.l7;
+  $('l3a').textContent=d.l3a;$('l3b').textContent=d.l3b;$('l4a').textContent=d.l4a;$('l4b').textContent=d.l4b;
+  $('l6a').textContent=d.l6a;$('l6b').textContent=d.l6b;$('l7a').textContent=d.l7a;$('l7b').textContent=d.l7b;
+  $('optCompact').textContent=d.optCompact;$('optStrings').textContent=d.optStrings;$('optJunk').textContent=d.optJunk;
+  $('warnNote').textContent=d.warnNote;
+  source.placeholder=d.placeholderSrc; output.placeholder=d.placeholderOut;
+  if(!output.value) $('outStat').textContent=d.noResult;
+  document.getElementById('htmlRoot').lang=uiLang;
+  paintAuthMode();
+  applyLangEngine();
+}
+$('langBtn').addEventListener('click',()=>{uiLang=uiLang==='vi'?'en':'vi';applyUiLang()});
+
+function applyLangEngine(){
+  const lang=language.value, info=ENGINE_INFO[lang][uiLang];
+  $('engineInfo').textContent=info[0];
+  $('luaOptions').classList.toggle('hidden', lang!=='lua');
+  $('genOptions').classList.toggle('hidden', lang==='lua');
+  const rel=RELEVANT[lang]||{compact:false,strings:false,junk:false};
+  ['compact','strings'].forEach(k=>{
+    const box=$(k), wrap=$(k+'Wrap');
+    box.disabled=!rel[k]; wrap.classList.toggle('disabledopt',!rel[k]);
+  });
+  const junkBox=$('junk2'), junkWrap=$('junkWrap');
+  junkBox.disabled=!rel.junk; junkWrap.classList.toggle('disabledopt',!rel.junk);
+  $('fileIn').setAttribute('accept', ACCEPT[lang]||'.txt');
+}
+
+/* ============ ENGINE LUA v3 ============ */
+function rB(){return (Math.random()*255|0)+1}
+function rName(len){
+  const c='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', d='0123456789';
+  let s='_'+c[Math.random()*c.length|0];
+  for(let i=1;i<len;i++) s+=(Math.random()<0.7?c:d)[Math.random()*(Math.random()<0.7?c.length:d.length)|0];
+  return s;
+}
+function toBytes(str){return new Uint8Array(new TextEncoder().encode(str))}
+function junkLine(){
+  const a=rName(6), n1=rB(), n2=rB();
+  const forms=[
+    `local ${a}=(${n1}*${n2})%256`,
+    `local ${a}={${n1},${n2},${(n1+n2)%256}}`,
+    `local ${a}=(function() return ${n1} end)()`,
+    `if (${n1}+${n2})%2==2 then local ${a}=${n1} end`,
+    `local ${a}=${n1}~=${n2} and ${n1} or ${n2}`
+  ];
+  return forms[Math.random()*forms.length|0];
+}
+function rol8(b,r){return r===0?b:((b<<r)|(b>>>(8-r)))&0xFF}
+function buildSbox(seed){
+  const box=Array.from({length:256},(_,i)=>i);
+  let s=seed;
+  const rnd=()=>{s=(s*1103515245+12345)&0x7fffffff;return s/0x7fffffff};
+  for(let i=255;i>0;i--){const j=(rnd()*(i+1))|0;[box[i],box[j]]=[box[j],box[i]]}
+  const inv=new Array(256);
+  box.forEach((v,i)=>inv[v]=i);
+  return {box,inv};
+}
+function luaObfuscate(source,layers,keylen,junkOn,rotOn,chunkCount,checksumOn,sboxOn){
+  let bytes=toBytes(source);
+  const keys=[],rots=[];
+  const seed=rB()*1000+rB();
+  const {box,inv}=buildSbox(seed);
+  for(let l=0;l<layers;l++){
+    const key=Array.from({length:keylen},rB);
+    keys.push(key);
+    const rot=rotOn?(1+(Math.random()*7|0)):0;
+    rots.push(rot);
+    const nb=new Uint8Array(bytes.length);
+    for(let i=0;i<bytes.length;i++){
+      let v=rol8(bytes[i],rot)^key[i%key.length];
+      if(sboxOn) v=box[v];
+      nb[i]=v;
+    }
+    bytes=nb;
+  }
+  let checksum=0; for(let i=0;i<bytes.length;i++) checksum=(checksum+bytes[i])%256;
+  chunkCount=Math.max(1,chunkCount|0);
+  const chunkArrs=Array.from({length:chunkCount},()=>[]);
+  for(let i=0;i<bytes.length;i++) chunkArrs[i%chunkCount].push(bytes[i]);
+  const N={K:rName(8)+'s',O:rName(8),bxorFn:rName(7),rorFn:rName(7),iVar:rName(4),cVar:rName(4),lyr:rName(4),sumVar:rName(6),tmp:rName(5),sboxVar:rName(6),chTbl:rName(6),opFn:rName(6)};
+  const keysLua=keys.map(k=>'{'+k.join(',')+'}').join(',');
+  function jb(n){let s='';for(let i=0;i<n;i++) s+=junkLine()+'\n';return s.trim()}
+  const rndJunk=()=>junkOn&&Math.random()<0.5?junkLine()+'\n':'';
+  const L=[];
+  L.push(`local ${N.bxorFn}=bit32 and bit32.bxor or function(a,b) local r,p=0,1 while a>0 or b>0 do local x,y=a%2,b%2 if x~=y then r=r+p end a,b,p=(a-x)/2,(b-y)/2,p*2 end return r end`);
+  L.push(`local function ${N.rorFn}(v,r) if r==0 then return v end local lo=v%(2^r) local hi=math.floor(v/(2^r)) return (hi+lo*(2^(8-r)))%256 end`);
+  if(junkOn) L.push(jb(1+(Math.random()*2|0)));
+  if(sboxOn) L.push(`local ${N.sboxVar}={${inv.join(',')}}`);
+  L.push(`local ${N.chTbl}={${chunkArrs.map(arr=>`{${arr.join(',')}}`).join(',')}}`);
+  L.push(rndJunk());
+  L.push(`local ${N.O}={}`);
+  L.push(`local ${N.cVar}=0`);
+  L.push(`for ${N.iVar}=0,${bytes.length-1} do`);
+  L.push(`  ${N.cVar}=${N.cVar}+1`);
+  L.push(`  local __ci=(${N.iVar}%${chunkCount})+1`);
+  L.push(`  local __co=math.floor(${N.iVar}/${chunkCount})+1`);
+  L.push(`  local __v=${N.chTbl}[__ci][__co]`);
+  if(sboxOn) L.push(`  __v=${N.sboxVar}[__v+1]`);
+  L.push(`  ${N.O}[${N.cVar}]=__v`);
+  L.push(`end`);
+  L.push(rndJunk());
+  if(checksumOn){
+    L.push(`local ${N.sumVar}=0`);
+    L.push(`for ${N.iVar}=1,#${N.O} do ${N.sumVar}=(${N.sumVar}+${N.O}[${N.iVar}])%256 end`);
+    L.push(`if ${N.sumVar}~=${checksum} then return end`);
+  }
+  L.push(`local ${N.K}={${keysLua}}`);
+  L.push(`local ${N.lyr}={${rots.join(',')}}`);
+  if(junkOn) L.push(junkLine());
+  L.push(`local ${N.opFn}={`);
+  L.push(`  [1]=function(v,k,r) return ${N.rorFn}(v,r) end,`);
+  L.push(`  [2]=function(v,k,r) return ${N.bxorFn}(v,k) end`);
+  L.push(`}`);
+  L.push(`for __l=#${N.K},1,-1 do`);
+  L.push(`  local k=${N.K}[__l]`);
+  L.push(`  local r=${N.lyr}[__l]`);
+  L.push(`  for ${N.iVar}=1,#${N.O} do`);
+  L.push(`    local v=${N.O}[${N.iVar}]`);
+  L.push(`    v=${N.opFn}[2](v, k[((${N.iVar}-1)%#k)+1], r)`);
+  L.push(`    v=${N.opFn}[1](v, k[((${N.iVar}-1)%#k)+1], r)`);
+  L.push(`    ${N.O}[${N.iVar}]=v`);
+  L.push(`  end`);
+  L.push(`end`);
+  L.push(rndJunk());
+  L.push(`local ${N.tmp}={}`);
+  L.push(`for ${N.iVar}=1,#${N.O} do ${N.tmp}[${N.iVar}]=string.char(${N.O}[${N.iVar}]) end`);
+  if(junkOn) L.push(junkLine());
+  L.push(`local ok,exec=pcall(function() return (loadstring or load)(table.concat(${N.tmp})) end)`);
+  L.push(`if ok and exec then return exec() end`);
+  return L.join('\n')+'\n';
+}
+
+/* ============ ENGINE JS / HTML / CSS / JSON ============ */
+function utf8(s){return new TextEncoder().encode(s)}
+function b64(bytes){let bin='';for(let i=0;i<bytes.length;i+=0x8000) bin+=String.fromCharCode(...bytes.subarray(i,i+0x8000));return btoa(bin)}
+function jsObf(src,strings,junk){
+  const payload=b64(utf8(src));
+  const noise=junk?`const _n=[${Array.from({length:12},()=>Math.random()*999|0).join(',')}];void _n;\n`:'';
+  if(strings) return `/* Obfuscated JavaScript wrapper */\n(()=>{\n${noise}const _p="${payload}";\nconst _b=Uint8Array.from(atob(_p),c=>c.charCodeAt(0));\nconst _s=new TextDecoder().decode(_b);\n(0,eval)(_s);\n})();\n`;
+  return `/* Base64 encoded JavaScript */\n(()=>{const _b=Uint8Array.from(atob("${payload}"),c=>c.charCodeAt(0));(0,eval)(new TextDecoder().decode(_b));})();`;
+}
+function htmlObf(src){
+  const payload=b64(utf8(src));
+  return `<!doctype html>\n<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Document</title></head><body>\n<script>(function(){var b=atob("${payload}");var a=new Uint8Array(b.length);for(var i=0;i<b.length;i++)a[i]=b.charCodeAt(i);var s=new TextDecoder().decode(a);document.open();document.write(s);document.close();})();<\/script>\n</body></html>`;
+}
+function minifyCSS(s){
+  return s.replace(/\/\*[\s\S]*?\*\//g,' ').replace(/\s+/g,' ').replace(/\s*([{}:;,>+~])\s*/g,'$1').replace(/;}/g,'}').trim();
+}
+function jsonUnicode(value){
+  if(typeof value==='string') return '"'+value.replace(/[\u007f-\uffff]/g,c=>'\\u'+c.charCodeAt(0).toString(16).padStart(4,'0')).replace(/"/g,'\\"')+'"';
+  if(Array.isArray(value)) return '['+value.map(jsonUnicode).join(',')+']';
+  if(value&&typeof value==='object') return '{'+Object.keys(value).map(k=>jsonUnicode(k)+':'+jsonUnicode(value[k])).join(',')+'}';
+  return JSON.stringify(value);
+}
+
+/* ============ GẮN KẾT UI ============ */
+const language=$('language'), source=$('source'), output=$('output');
+function updateInStat(){const n=source.value.length;$('inStat').textContent=n?`${n} ${DICT[uiLang].charUnit}`:''}
+source.addEventListener('input',updateInStat);
+language.addEventListener('change',()=>{applyLangEngine();$('fileIn').value=''});
+
+$('fileLabel').addEventListener('click',()=>$('fileIn').click());
+$('fileIn').addEventListener('change',e=>{
+  const f=e.target.files[0];if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{source.value=String(r.result||'');updateInStat()};
+  r.readAsText(f);
+});
+$('clearBtn').addEventListener('click',()=>{
+  source.value='';output.value='';updateInStat();
+  $('outStat').textContent=DICT[uiLang].noResult;$('timeStat').textContent='';
+});
+
+$('runBtn').addEventListener('click',()=>{
+  const src=source.value;
+  if(!src.trim()){output.value='';$('outStat').textContent=DICT[uiLang].noResult;$('timeStat').textContent='';return}
+  const lang=language.value;
+  const t0=performance.now();
+  let result='';
+  try{
+    if(lang==='lua'){
+      const layers=parseInt($('layers').value,10), keylen=parseInt($('keylen').value,10);
+      const junkOn=$('junk').value==='1', rotOn=$('rot').value==='1';
+      const chunkCount=parseInt($('chunks').value,10);
+      const checksumOn=$('checksum').value==='1', sboxOn=$('sbox').value==='1';
+      result=luaObfuscate(src,layers,keylen,junkOn,rotOn,chunkCount,checksumOn,sboxOn);
+      $('outStat').textContent=`${result.length} ${DICT[uiLang].charUnit} · ${layers}L · ${chunkCount}c${rotOn?' · rot':''}${checksumOn?' · chk':''}${sboxOn?' · sbox':''}`;
+    }else{
+      const compact=$('compact').checked, strings=$('strings').checked, junk=$('junk2').checked;
+      if(lang==='javascript') result=jsObf(src,strings,junk);
+      else if(lang==='html') result=htmlObf(src);
+      else if(lang==='css') result=compact?minifyCSS(src):src;
+      else if(lang==='json'){
+        const parsed=JSON.parse(src);
+        result=strings?jsonUnicode(parsed):(compact?JSON.stringify(parsed):JSON.stringify(parsed,null,2));
+      }
+      $('outStat').textContent=`${result.length} ${DICT[uiLang].charUnit}`;
+    }
+    output.value=result;
+    $('timeStat').textContent=(performance.now()-t0).toFixed(1)+' ms';
+  }catch(e){
+    output.value='/* error: '+e.message.replace(/\*\//g,'* /')+' */';
+    $('outStat').textContent=uiLang==='vi'?'Có lỗi xử lý':'Processing error';
+    $('timeStat').textContent='';
+  }
+});
+
+$('copyBtn').addEventListener('click', async ()=>{
+  if(!output.value) return;
+  try{await navigator.clipboard.writeText(output.value)}
+  catch(e){output.select();document.execCommand('copy')}
+  const t=$('toast');t.textContent=DICT[uiLang].toast;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),1200);
+});
+$('dlBtn').addEventListener('click',()=>{
+  if(!output.value) return;
+  const ext={lua:'lua',javascript:'js',html:'html',css:'css',json:'json'}[language.value];
+  const blob=new Blob([output.value],{type:'text/plain;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download='obfuscated.'+ext;
+  document.body.appendChild(a);a.click();a.remove();
+  URL.revokeObjectURL(url);
+});
+
+applyUiLang();
+sessionCheck();
+})();
+</script>
+<script>
+(function(){
+  /* ảnh SVG sinh sẵn, dùng cho thẻ <img data-art="seed,hue,w,h"> */
+  function rng(seed){let s=seed*9301+49297;return function(){return (s=(s*9301+49297)%233280)/233280}}
+  function art(seed,hue,w,h){
+    var r=rng(seed+3),h2=(hue+70)%360,h3=(hue+160)%360,m=Math.min(w,h)/2;
+    var o='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+w+' '+h+'"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="hsl('+hue+',85%,24%)"/><stop offset="1" stop-color="hsl('+h2+',80%,12%)"/></linearGradient><radialGradient id="r"><stop offset="0" stop-color="hsl('+h3+',100%,70%)"/><stop offset="1" stop-color="hsl('+hue+',100%,55%)" stop-opacity="0"/></radialGradient></defs><rect width="'+w+'" height="'+h+'" fill="url(#g)"/>';
+    var i;
+    for(i=0;i<4;i++)o+='<circle cx="'+(r()*w)+'" cy="'+(r()*h)+'" r="'+(m*(.5+r()*.7))+'" fill="url(#r)" opacity=".8"/>';
+    o+='<g transform="translate('+w/2+' '+h/2+')">';
+    for(i=0;i<4;i++){var d=(6+r()*20).toFixed(0);o+='<circle r="'+(m*(.28+i*.17))+'" fill="none" stroke="hsl('+((hue+i*35)%360)+',100%,'+(66+i*4)+'%)" stroke-width="'+(m*.03)+'" stroke-dasharray="'+d+' '+(d*.8)+'" stroke-linecap="round" opacity=".9"/>'}
+    o+='<polygon points="0,'+(-m*.2)+' '+(m*.17)+','+(m*.1)+' '+(-m*.17)+','+(m*.1)+'" fill="hsl('+h3+',100%,75%)"/></g>';
+    for(i=0;i<8;i++)o+='<circle cx="'+(r()*w)+'" cy="'+(r()*h)+'" r="'+(1+r()*2)+'" fill="#fff" opacity=".8"/>';
+    return o+'</svg>';
+  }
+  document.querySelectorAll('img[data-art]').forEach(function(im){
+    var p=im.dataset.art.split(',').map(Number);
+    im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(art(p[0],p[1],p[2]||300,p[3]||300));
+  });
+
+  /* chuyển trang bằng rèm */
+  var c=document.getElementById('curtain');
+  document.querySelectorAll('a.home').forEach(function(a){a.addEventListener('click',function(e){
+    e.preventDefault();c.classList.add('go');setTimeout(function(){location.href=a.getAttribute('href')},650);
+  })});
+  addEventListener('pageshow',function(){c.classList.remove('go')});
+
+  /* nền hạt sáng, rất nhẹ (không nối tia) */
+  if(matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+  var cv=document.getElementById('fx'),x=cv.getContext('2d'),W,H,P=[];
+  function size(){W=cv.width=innerWidth;H=cv.height=innerHeight;
+    P=[];for(var i=0;i<Math.min(28,W/40|0);i++)P.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.35,vy:(Math.random()-.5)*.35,r:Math.random()*1.8+.6,h:Math.random()*360})}
+  size();addEventListener('resize',size);
+  var run=false;
+  function loop(){
+    if(document.hidden){run=false;return}
+    x.clearRect(0,0,W,H);
+    for(var i=0;i<P.length;i++){var p=P[i];p.x+=p.vx;p.y+=p.vy;
+      if(p.x<0)p.x=W;if(p.x>W)p.x=0;if(p.y<0)p.y=H;if(p.y>H)p.y=0;
+      x.fillStyle='hsl('+p.h+',100%,72%)';x.globalAlpha=.7;x.beginPath();x.arc(p.x,p.y,p.r,0,7);x.fill()}
+    requestAnimationFrame(loop);
+  }
+  run=true;loop();
+  document.addEventListener('visibilitychange',function(){if(!document.hidden&&!run){run=true;loop()}});
+})();
+</script>
 </body>
 </html>
