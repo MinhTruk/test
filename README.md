@@ -1,98 +1,169 @@
 # ⚡ SAVE LAB
-### GAME SAVE TOOLKIT — GIẢI MÃ · PHÂN TÍCH · CHỈNH SỬA
+### GAME SAVE TOOLKIT · GIẢI MÃ · PHÂN TÍCH · CHỈNH SỬA
 
 <p align="center">
   <b>Chào mừng đến với SAVE LAB!</b>
   <br>
-  Bộ công cụ hỗ trợ giải mã, phân tích và làm việc với dữ liệu lưu game.
+  Bộ công cụ trực tuyến dành cho việc giải mã, phân tích, chỉnh sửa dữ liệu game và xử lý mã nguồn.
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/SAVE%20LAB-GAME%20TOOLKIT-8B5CF6?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/PLATFORM-WEB-06B6D4?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/TOOLS-05-F59E0B?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/STATUS-ACTIVE-22C55E?style=for-the-badge" />
 </p>
 
 ---
 
-## 🌌 Giới thiệu
+## 🌌 1. Giới thiệu
 
-**SAVE LAB** là một dự án tập hợp các công cụ trực tuyến được xây dựng dưới dạng HTML, hướng đến việc hỗ trợ người dùng làm việc với các tệp lưu trữ dữ liệu trò chơi (Game Save Files).
+**SAVE LAB** là dự án tập hợp các công cụ trực tuyến được xây dựng chủ yếu dưới dạng HTML, hướng đến việc hỗ trợ người dùng làm việc với dữ liệu lưu game, phân tích cấu trúc tệp và xử lý mã nguồn.
 
-Dự án tập trung vào việc cung cấp giao diện đơn giản, dễ sử dụng và thuận tiện, giúp người dùng có thể tiếp cận các thao tác như giải mã, đọc, phân tích và chỉnh sửa dữ liệu lưu game mà không cần cài đặt phần mềm riêng biệt.
+Dự án được xây dựng với mục tiêu tập trung nhiều tiện ích khác nhau vào một nền tảng duy nhất, giúp người dùng không cần phải tìm kiếm và sử dụng quá nhiều phần mềm riêng biệt.
 
-Thay vì phải sử dụng nhiều công cụ khác nhau, SAVE LAB hướng đến việc tập hợp chúng trong một giao diện duy nhất.
+Từ việc giải mã save file, kiểm tra dữ liệu RPG Maker, phân tích cấu trúc Ruby Marshal cho đến làm rối mã JavaScript, SAVE LAB hướng đến việc tạo ra một không gian làm việc thuận tiện, trực quan và dễ tiếp cận.
 
-### 🎯 Mục tiêu của dự án
+### 🎯 Mục tiêu dự án
 
-- Xây dựng bộ công cụ xử lý dữ liệu lưu game tập trung.
-- Hỗ trợ nhiều định dạng save file khác nhau.
-- Đơn giản hóa các thao tác giải mã và phân tích dữ liệu.
-- Tối ưu trải nghiệm sử dụng trên cả máy tính và điện thoại.
-- Liên tục bổ sung các công cụ và tính năng mới.
+- Tập hợp các công cụ xử lý dữ liệu game trên cùng một nền tảng.
+- Hỗ trợ nhiều định dạng save file và cấu trúc dữ liệu.
+- Đơn giản hóa quá trình giải mã, kiểm tra và chỉnh sửa dữ liệu.
+- Cung cấp tiện ích xử lý mã nguồn ngay trên trình duyệt.
+- Tối ưu trải nghiệm trên cả máy tính và thiết bị di động.
+- Liên tục phát triển và bổ sung những công cụ mới.
 
 ---
 
-## 🧰 Danh sách công cụ
+## 🧰 2. Danh sách công cụ
 
-SAVE LAB hiện có định hướng phát triển 10 công cụ riêng biệt.
+SAVE LAB hiện có 5 công cụ thuộc các nhóm chức năng khác nhau.
 
-| STT | Công cụ | Chức năng | Trạng thái |
+| STT | Công cụ | Chức năng chính | Trạng thái |
 |:---:|---|---|:---:|
-| 01 | NSON / ES3 Decrypter | Giải mã và phân tích dữ liệu NSON / ES3 | 🟢 Hoạt động |
-| 02 | RMMZ Decrypter | Công cụ xử lý save file RPG Maker MZ | 🟢 Hoạt động |
-| 03 | Mystery Tool | Đang phát triển | 🟡 Sắp ra mắt |
-| 04 | Mystery Tool | Đang phát triển | 🟡 Sắp ra mắt |
-| 05 | Mystery Tool | Đang phát triển | 🟡 Sắp ra mắt |
-| 06 | Mystery Tool | Đang phát triển | 🟡 Sắp ra mắt |
-| 07 | Mystery Tool | Đang phát triển | 🟡 Sắp ra mắt |
-| 08 | Mystery Tool | Đang phát triển | 🟡 Sắp ra mắt |
-| 09 | Mystery Tool | Đang phát triển | 🟡 Sắp ra mắt |
-| 10 | Mystery Tool | Đang phát triển | 🟡 Sắp ra mắt |
+| 01 | NSON / ES3 Decrypter | Giải mã và phân tích dữ liệu NSON / Easy Save 3 | 🟢 |
+| 02 | RMMZ Decrypter | Xử lý save file RPG Maker MZ | 🟢 |
+| 03 | RPG Maker Save Editor | Phân tích và chỉnh sửa save RPG Maker MV | 🟢 |
+| 04 | Ruby Marshal Inspector | Kiểm tra cấu trúc dữ liệu Ruby Marshal | 🟢 |
+| 05 | OBF – Code Obfuscator | Làm rối và biến đổi mã nguồn | 🟢 |
 
-*Các công cụ mới sẽ được cập nhật dần trong những phiên bản tiếp theo.*
+### 01. NSON / ES3 Decrypter
+
+Công cụ hỗ trợ làm việc với dữ liệu được tạo bởi NSON và Easy Save 3.
+
+Các chức năng chính:
+- Giải mã dữ liệu thuộc định dạng được hỗ trợ.
+- Phân tích cấu trúc dữ liệu.
+- Kiểm tra các giá trị được lưu trữ.
+- Hỗ trợ chỉnh sửa dữ liệu theo khả năng của công cụ.
+
+### 02. RMMZ Decrypter
+
+Công cụ dành cho các tệp lưu trữ của RPG Maker MZ.
+
+Các chức năng chính:
+- Đọc và xử lý save file RPG Maker MZ.
+- Giải mã dữ liệu theo định dạng được hỗ trợ.
+- Phân tích nội dung save.
+- Hỗ trợ thao tác với dữ liệu lưu game.
+
+### 03. RPG Maker Save Editor
+
+Công cụ hỗ trợ làm việc với save file RPG Maker MV.
+
+Định hướng chức năng:
+- Tiếp nhận tệp `.rpgsave`.
+- Phân tích dữ liệu save.
+- Hỗ trợ truy cập và chỉnh sửa những trường dữ liệu được công cụ nhận diện.
+- Xuất dữ liệu sau khi xử lý.
+
+### 04. Ruby Marshal Inspector
+
+Công cụ dành cho việc kiểm tra và phân tích dữ liệu sử dụng cấu trúc Ruby Marshal.
+
+Các định dạng mục tiêu:
+- `.rxdata` – RPG Maker XP.
+- `.rvdata` – RPG Maker VX.
+- `.rvdata2` – RPG Maker VX Ace.
+
+Các chức năng:
+- Nhận diện cấu trúc Ruby Marshal.
+- Kiểm tra token và dữ liệu nhị phân HEX.
+- Hỗ trợ khảo sát cấu trúc save file.
+- Làm cơ sở cho việc phát triển các chức năng phân tích sâu hơn.
+
+*Lưu ý: Công cụ hiện tập trung vào kiểm tra cấu trúc và dữ liệu, không đồng nghĩa với việc đã hỗ trợ giải mã và chỉnh sửa hoàn chỉnh mọi save file RGSS.*
+
+### 05. OBF – Code Obfuscator
+
+Công cụ hỗ trợ làm rối mã nguồn, giúp biến đổi cách biểu diễn mã nhằm khiến việc đọc hiểu trực tiếp trở nên khó khăn hơn.
+
+Các chức năng hướng đến:
+- Xử lý mã nguồn JavaScript.
+- Làm rối mã nguồn bằng các kỹ thuật obfuscation được hỗ trợ.
+- Hỗ trợ xử lý mã nguồn đầu vào và xuất kết quả.
+- Phục vụ việc bảo vệ và làm khó quá trình đọc mã nguồn trực tiếp.
+
+*Obfuscation không phải phương pháp mã hóa bảo mật tuyệt đối và không thể đảm bảo mã nguồn không bị phân tích ngược.*
 
 ---
 
-## ✨ Tính năng nổi bật
+## ✨ 3. Tính năng nổi bật
 
-### 🖥️ Giao diện người dùng
-- Thiết kế Dark Mode theo phong cách Cyberpunk / Gaming.
-- Giao diện trực quan, dễ điều hướng.
-- Banner hình ảnh riêng cho từng công cụ.
-- Hiệu ứng chuyển động được tiết chế để tránh gây nặng máy.
+### 🎨 Giao diện
 
-### 📱 Tối ưu thiết bị
-- Hỗ trợ máy tính, laptop, tablet và điện thoại.
-- Thiết kế Responsive.
-- Tối ưu hiệu năng trên màn hình cảm ứng.
-- Hạn chế các hiệu ứng gây tiêu tốn tài nguyên không cần thiết.
+- Dark Mode theo phong cách Cyberpunk / Gaming.
+- Thiết kế giao diện thống nhất giữa các công cụ.
+- Banner và hình ảnh riêng cho từng tiện ích.
+- Bố cục trực quan, dễ sử dụng.
+- Hiệu ứng chuyển động được tiết chế.
+- Tập trung vào khả năng sử dụng thay vì hiệu ứng trang trí quá mức.
 
-### 🔧 Hệ thống công cụ
-- Các công cụ được chia thành từng trang HTML độc lập.
-- Không yêu cầu cài đặt ứng dụng riêng cho giao diện web.
-- Dễ dàng bổ sung công cụ mới.
-- Có thể sử dụng thông qua trình duyệt tương thích.
+### 📱 Khả năng tương thích
 
----
+- Hỗ trợ máy tính và laptop.
+- Tương thích với tablet.
+- Giao diện Responsive cho điện thoại.
+- Các thành phần điều khiển phù hợp với màn hình cảm ứng.
+- Tối ưu hiệu năng và hạn chế animation không cần thiết.
 
-## 🚀 Hướng dẫn sử dụng
+### ⚙️ Kiến trúc công cụ
 
-### 1. Truy cập SAVE LAB
-
-Mở trang chủ của dự án thông qua GitHub Pages hoặc chạy trực tiếp file HTML trên thiết bị.
-
-### 2. Chọn công cụ
-
-Tại trang chủ, lựa chọn công cụ tương ứng với định dạng save file mà bạn muốn xử lý.
-
-### 3. Làm việc với dữ liệu
-
-Thực hiện các thao tác theo hướng dẫn được hiển thị trong từng công cụ.
-
-### 4. Lưu kết quả
-
-Sau khi hoàn tất, kiểm tra dữ liệu đầu ra và lưu lại theo hướng dẫn của công cụ.
-
-> **Lưu ý:** Luôn tạo bản sao lưu save file gốc trước khi thực hiện bất kỳ thao tác chỉnh sửa nào.
+- Mỗi công cụ được triển khai trên một trang HTML riêng.
+- Các công cụ hoạt động độc lập về giao diện và chức năng.
+- Dễ dàng bổ sung hoặc cập nhật tiện ích.
+- Không yêu cầu cài đặt ứng dụng riêng để sử dụng giao diện web.
+- Có thể truy cập thông qua trình duyệt tương thích.
 
 ---
 
-## 📁 Cấu trúc dự án
+## 🚀 4. Hướng dẫn sử dụng
+
+### Bước 1 – Truy cập
+
+Mở trang chủ SAVE LAB thông qua GitHub Pages hoặc chạy dự án trực tiếp trên thiết bị.
+
+### Bước 2 – Chọn công cụ
+
+Lựa chọn công cụ phù hợp với định dạng dữ liệu hoặc mục đích sử dụng.
+
+### Bước 3 – Nhập dữ liệu
+
+Tải tệp save hoặc nhập mã nguồn vào khu vực làm việc của công cụ.
+
+### Bước 4 – Xử lý
+
+Thực hiện các thao tác được cung cấp trên giao diện.
+
+### Bước 5 – Xuất kết quả
+
+Kiểm tra kết quả và tải dữ liệu sau khi hoàn tất.
+
+> **Lưu ý:** Luôn giữ lại bản sao của tệp gốc trước khi thực hiện các thao tác chỉnh sửa. Đối với công cụ xử lý mã nguồn, hãy kiểm tra kết quả trước khi đưa vào sử dụng.
+
+---
+
+## 📁 5. Cấu trúc dự án
 
 ```text
 SAVE-LAB/
@@ -101,6 +172,9 @@ SAVE-LAB/
 │
 ├── Save_Tool_NSON_ES3.html
 ├── savelab_rmmz.html
+├── tool3.html
+├── tool4.html
+├── obf.html
 │
 ├── tos.html
 ├── privacy.html
@@ -110,79 +184,98 @@ SAVE-LAB/
 
 | Tệp | Mô tả |
 |---|---|
-| `index.html` | Trang chủ, nơi truy cập các công cụ |
-| `Save_Tool_NSON_ES3.html` | Công cụ NSON / ES3 Decrypter |
-| `savelab_rmmz.html` | Công cụ RMMZ Decrypter |
+| `index.html` | Trang chủ và danh sách công cụ |
+| `Save_Tool_NSON_ES3.html` | NSON / ES3 Decrypter |
+| `savelab_rmmz.html` | RMMZ Decrypter |
+| `tool3.html` | RPG Maker Save Editor |
+| `tool4.html` | Ruby Marshal Inspector |
+| `obf.html` | OBF – Code Obfuscator |
 | `tos.html` | Điều khoản sử dụng |
 | `privacy.html` | Chính sách quyền riêng tư |
-| `README.md` | Tài liệu giới thiệu dự án |
+| `README.md` | Tài liệu dự án |
 
 ---
 
-## 🔒 Quyền riêng tư và bảo mật
+## 🔒 6. Quyền riêng tư và bảo mật
 
-SAVE LAB hướng đến việc đảm bảo dữ liệu người dùng được xử lý an toàn và minh bạch.
+SAVE LAB hướng đến việc xử lý dữ liệu một cách minh bạch và an toàn.
 
-Một số nguyên tắc quan trọng:
+Các nguyên tắc của dự án:
 
-- Không chia sẻ save file của người dùng khi chưa được cho phép.
+- Không chia sẻ dữ liệu người dùng khi chưa được cho phép.
+- Hạn chế thu thập thông tin không cần thiết.
 - Không sử dụng dữ liệu cá nhân ngoài mục đích cần thiết.
-- Người dùng nên kiểm tra cách thức xử lý dữ liệu của từng công cụ.
-- Không tải lên hoặc sử dụng các tệp không đáng tin cậy.
+- Khuyến khích xử lý dữ liệu trực tiếp trên trình duyệt khi công cụ hỗ trợ.
+- Người dùng cần kiểm tra cách thức xử lý dữ liệu của từng công cụ.
 
-Chi tiết được trình bày trong:
+Không nên mặc định rằng tất cả công cụ đều hoạt động hoàn toàn offline. Cách xử lý dữ liệu có thể phụ thuộc vào từng tiện ích và thư viện được sử dụng.
 
-- [Chính sách quyền riêng tư (Privacy Policy)](privacy.html)
-- [Điều khoản sử dụng (Terms of Service)](tos.html)
-
----
-
-## ⚠️ Tuyên bố miễn trừ trách nhiệm
-
-SAVE LAB là dự án độc lập, không trực thuộc hoặc được bảo trợ bởi các nhà phát triển trò chơi được hỗ trợ.
-
-Người dùng chịu trách nhiệm đối với các thao tác thực hiện trên dữ liệu của mình.
-
-- Chỉ sử dụng công cụ với các tệp mà bạn sở hữu hoặc được phép xử lý.
-- Không sử dụng công cụ để xâm phạm quyền riêng tư hoặc quyền sở hữu trí tuệ của người khác.
-- Không đảm bảo mọi định dạng save file đều tương thích.
-- Kết quả xử lý có thể khác nhau tùy thuộc vào phiên bản game và cấu trúc dữ liệu.
-- Dự án không chịu trách nhiệm đối với dữ liệu bị mất do người dùng không sao lưu trước khi chỉnh sửa.
+Tìm hiểu thêm:
+- [Chính sách quyền riêng tư](privacy.html)
+- [Điều khoản sử dụng](tos.html)
 
 ---
 
-## 🛣️ Lộ trình phát triển
+## ⚠️ 7. Tuyên bố miễn trừ trách nhiệm
+
+SAVE LAB là một dự án độc lập, không trực thuộc, không được bảo trợ hoặc liên kết chính thức với các nhà phát triển game hay nhà phát hành được đề cập.
+
+Người dùng chịu trách nhiệm đối với các thao tác được thực hiện bằng công cụ.
+
+- Chỉ xử lý các tệp mà bạn sở hữu hoặc được phép sử dụng.
+- Không sử dụng công cụ để xâm phạm quyền riêng tư hoặc quyền sở hữu trí tuệ.
+- Không đảm bảo mọi định dạng và phiên bản game đều tương thích.
+- Việc chỉnh sửa dữ liệu có thể gây lỗi hoặc làm hỏng save file.
+- Kết quả xử lý phụ thuộc vào cấu trúc dữ liệu và phiên bản của từng trò chơi.
+- Obfuscation không đảm bảo mã nguồn không thể bị khôi phục hoặc phân tích.
+- Dự án không chịu trách nhiệm đối với mất mát dữ liệu do người dùng không sao lưu trước khi chỉnh sửa.
+
+---
+
+## 🛣️ 8. Lộ trình phát triển
 
 | Hạng mục | Trạng thái |
-|---|---|
-| Xây dựng giao diện trang chủ   | ✅ Hoàn thành |
-| Điều khoản sử dụng             | ✅ Đã có |
-| Chính sách quyền riêng tư      | ✅ Đã có |
-| Bổ sung công cụ số 03–10       | ⏳ Dự kiến |
-| Cải thiện trải nghiệm mobile   | 🔄 Tiếp tục tối ưu |
-| Tối ưu hiệu năng tổng thể      | 🔄 Tiếp tục tối ưu |
+|---|:---:|
+| Xây dựng giao diện trang chủ | ✅ Hoàn thành |
+| NSON / ES3 Decrypter | ✅ Đã có |
+| RMMZ Decrypter | ✅ Đã có |
+| RPG Maker Save Editor | ✅ Đã có |
+| Ruby Marshal Inspector | ✅ Đã có |
+| OBF – Code Obfuscator | ✅ Đã có |
+| Điều khoản sử dụng | ✅ Hoàn thành |
+| Chính sách quyền riêng tư | ✅ Hoàn thành |
+| Bổ sung công cụ mới | ⏳ Dự kiến |
+| Tối ưu trải nghiệm Mobile | 🔄 Tiếp tục |
+| Cải thiện hiệu năng | 🔄 Tiếp tục |
+| Mở rộng khả năng xử lý định dạng | 🔄 Tiếp tục |
 
 ---
 
-## 🤝 Đóng góp và phản hồi
+## 🤝 9. Đóng góp và phản hồi
 
-SAVE LAB vẫn đang trong quá trình phát triển. Mọi ý kiến đóng góp đều được hoan nghênh.
+SAVE LAB vẫn đang trong quá trình phát triển. Mọi ý kiến đóng góp và đề xuất đều được hoan nghênh.
 
-Nếu bạn phát hiện lỗi hoặc có đề xuất tính năng mới, bạn có thể:
+Nếu phát hiện lỗi hoặc muốn đề xuất tính năng mới:
 
-1. Mở mục **Issues** trên GitHub.
-2. Mô tả lỗi hoặc tính năng mong muốn.
-3. Cung cấp thông tin về trình duyệt, thiết bị và phiên bản công cụ nếu cần thiết.
+1. Truy cập mục **Issues** trên GitHub.
+2. Tạo một Issue mới.
+3. Mô tả lỗi hoặc tính năng mong muốn.
+4. Cung cấp thông tin về trình duyệt, thiết bị và phiên bản công cụ.
+5. Đính kèm hình ảnh hoặc ví dụ nếu cần thiết.
 
-Những đóng góp phù hợp sẽ giúp dự án ngày càng hoàn thiện hơn.
+Repository:
+
+https://github.com/MinhTruk/bakhi
 
 ---
 
-## 📜 Bản quyền
+## 📜 10. Bản quyền
 
-Mã nguồn và tài nguyên của dự án thuộc phạm vi bản quyền của chủ sở hữu tương ứng.
+Mã nguồn, giao diện và tài nguyên trong SAVE LAB thuộc phạm vi bản quyền của các chủ sở hữu tương ứng.
 
-Việc sử dụng, sao chép, chỉnh sửa hoặc phân phối lại cần tuân thủ giấy phép của repository và quyền của các chủ sở hữu tài nguyên bên thứ ba.
+Việc sao chép, chỉnh sửa hoặc phân phối lại cần tuân thủ giấy phép của repository và quyền của các chủ sở hữu tài nguyên bên thứ ba.
+
+Các nhãn hiệu, tên trò chơi và công nghệ được đề cập thuộc quyền sở hữu của chủ sở hữu tương ứng.
 
 ---
 
@@ -190,8 +283,10 @@ Việc sử dụng, sao chép, chỉnh sửa hoặc phân phối lại cần tu�
 
 # ⚡ SAVE LAB
 
-**Không chỉ là công cụ. Đó là phòng thí nghiệm dành cho dữ liệu game.**
+**KHÁM PHÁ DỮ LIỆU. GIẢI MÃ GIỚI HẠN. LÀM CHỦ CÔNG CỤ.**
 
-*Explore. Decode. Modify.*
+Một không gian dành cho những người thích khám phá cách dữ liệu vận hành.
+
+`EXPLORE. DECODE. INSPECT. MODIFY.`
 
 </p>
