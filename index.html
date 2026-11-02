@@ -278,7 +278,7 @@ const TOOLS = [
   {name:"RMMZ Decrypter",       desc:"Đọc & sửa file save của RPG Maker MZ.",           href:"savelab_rmmz.html",      hue:320},
   {name:"RPG Maker Save Editor", desc:"Chỉnh sửa file save RPG Maker MV (.rpgsave).", href:"tool3.html",  hue:45},
   {name:"RubyMarshal Inspector", desc:"Kiểm tra cấu trúc save RGSS (.rxdata, .rvdata,...).", href:"tool4.html",  hue:265},
-  {name:"Công cụ 5", desc:"Sắp ra mắt.", href:"tool5.html",  hue:150},
+  {name:"ObfusKit", desc:"Bộ công cụ làm rối code", href:"tool5.html",  hue:150},
   {name:"Công cụ 6", desc:"Sắp ra mắt.", href:"tool6.html",  hue:10},
   {name:"Công cụ 7", desc:"Sắp ra mắt.", href:"tool7.html",  hue:210},
   {name:"Công cụ 8", desc:"Sắp ra mắt.", href:"tool8.html",  hue:290},
@@ -347,7 +347,7 @@ const blobs=document.getElementById("blobs"), bl=[];
 /* ===== Thẻ + nút ===== */
 const grid=document.getElementById("grid");
 TOOLS.forEach((t,i)=>{
-  const on=i<4;
+  const on=i<5;
   const c=document.createElement("article");c.className="card";
   c.innerHTML=`
     <span class="tag ${on?"on":""}">${on?"Sẵn sàng":"Sắp ra mắt"}</span>
