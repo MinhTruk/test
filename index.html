@@ -93,13 +93,15 @@ h1 span{display:inline-block;opacity:0;transform:translateY(-55%) rotateX(45deg)
 
 footer{margin-top:70px;text-align:center;color:var(--mut);font-size:.9rem}
 .marquee{overflow:hidden;white-space:nowrap;margin-top:40px;}
-.marquee div{display:inline-block;animation:mq 32s linear infinite;font-size:clamp(1.6rem,5vw,3rem);font-weight:900;color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.35)}
+.marquee div{display:inline-block;animation:mq 46s linear infinite;font-size:clamp(1.6rem,5vw,3rem);font-weight:900;color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.35)}
 @keyframes mq{to{transform:translateX(-50%)}}
 
 /* page transition */
 #curtain{position:fixed;inset:0;z-index:99;pointer-events:none;display:grid;grid-template-columns:repeat(5,1fr)}
 #curtain i{background:linear-gradient(180deg,var(--vi),var(--mg));transform:scaleY(0);transform-origin:bottom;transition:transform .3s cubic-bezier(.7,0,.3,1)}
 #curtain.go i{transform:scaleY(1)}
+#curtain.nt i{transition:none}
+#curtain.rev i{transform-origin:top}
 #curtain i:nth-child(2){transition-delay:.035s}#curtain i:nth-child(3){transition-delay:.07s}
 #curtain i:nth-child(4){transition-delay:.105s}#curtain i:nth-child(5){transition-delay:.14s}
 
@@ -217,7 +219,9 @@ img{pointer-events:none;-webkit-touch-callout:none}
 .rm-body img{max-width:100%;height:auto;border-radius:10px}
 .rm-msg{text-align:center;color:var(--mut);padding:24px 0}
 .rm-msg a{display:inline-block;margin-top:10px}
-.rm-dots{display:inline-block;width:1.4em;text-align:left}
+.rm-live{display:inline-flex;align-items:center;gap:6px;font-size:.68rem;color:var(--mut);font-weight:600}
+.rm-live i{width:6px;height:6px;border-radius:50%;background:#3dffb0;box-shadow:0 0 8px #3dffb0;flex:none;animation:rmLive 1.8s ease-in-out infinite}
+@keyframes rmLive{50%{opacity:.35;transform:scale(.7)}}
 @media (max-width:600px){.rm{place-items:end center}.rm-box{border-radius:26px;max-height:86vh}.rm-gh{display:none}.rm-body{padding:16px 18px 22px}}
 @media (prefers-reduced-motion:reduce){.rm-bg,.rm-box,.rm.closing .rm-box,.rm.closing .rm-bg{animation:none}}
 </style>
@@ -227,6 +231,7 @@ img{pointer-events:none;-webkit-touch-callout:none}
 <canvas id="fx"></canvas>
 <div id="blobs"></div>
 <div id="curtain"><i></i><i></i><i></i><i></i><i></i></div>
+<script>(function(){try{var t=+sessionStorage.getItem("sl-cv");sessionStorage.removeItem("sl-cv");if(!t||Date.now()-t>4000)return;var c=document.getElementById("curtain");c.className="go nt";c.offsetWidth;requestAnimationFrame(function(){requestAnimationFrame(function(){c.className="rev";setTimeout(function(){c.classList.remove("rev")},800)})})}catch(e){}})()</script>
 
 <header class="topbar">
   <a class="tb-brand" href="#" aria-label="SaveLab"><span class="tb-mark">SL</span><span>SAVELAB</span></a>
@@ -264,6 +269,7 @@ img{pointer-events:none;-webkit-touch-callout:none}
   <section class="rm-box" id="rmBox" role="dialog" aria-modal="true" aria-labelledby="rmT" tabindex="-1">
     <header class="rm-h">
       <h2 id="rmT">📖 README.md</h2>
+      <span class="rm-live" id="rmLive" hidden><i></i>Đang cập nhật…</span>
       <a class="rm-gh" href="https://github.com/MinhTruk/test/blob/main/README.md" target="_blank" rel="noopener noreferrer">Mở trên GitHub ↗</a>
       <button class="rm-x" type="button" data-close aria-label="Đóng">✕</button>
     </header>
@@ -278,7 +284,7 @@ const TOOLS = [
   {name:"RMMZ Decrypter",       desc:"Đọc & sửa file save của RPG Maker MZ.",           href:"savelab_rmmz.html",      hue:320},
   {name:"RPG Maker Save Editor", desc:"Chỉnh sửa file save RPG Maker MV (.rpgsave).", href:"tool3.html",  hue:45},
   {name:"RubyMarshal Inspector", desc:"Kiểm tra cấu trúc save RGSS (.rxdata, .rvdata,...).", href:"tool4.html",  hue:265},
-  {name:"ObfusKit", desc:"Bộ công cụ làm rối code", href:"tool5.html",  hue:150},
+  {name:"ObfusKit", desc:"Làm rối code nhiều ngôn ngữ: Lua, JS,...", href:"tool5.html",  hue:150},
   {name:"Công cụ 6", desc:"Sắp ra mắt.", href:"tool6.html",  hue:10},
   {name:"Công cụ 7", desc:"Sắp ra mắt.", href:"tool7.html",  hue:210},
   {name:"Công cụ 8", desc:"Sắp ra mắt.", href:"tool8.html",  hue:290},
@@ -386,29 +392,47 @@ cards.forEach(c=>{
   c.addEventListener("mouseleave",()=>c.style.transform="");
 });
 
-/* gợn sóng + chuyển trang bằng rèm */
+/* gợn sóng + chuyển trang bằng rèm (áp dụng cho cả nút công cụ và nút Điều khoản/Bảo mật) */
 const curtain=document.getElementById("curtain");
-document.querySelectorAll(".btn").forEach(b=>b.addEventListener("click",e=>{
-  e.preventDefault();
-  const r=b.getBoundingClientRect(),s=Math.max(r.width,r.height),d=document.createElement("span");
-  d.className="rip";d.style.cssText=`width:${s}px;height:${s}px;left:${e.clientX-r.left-s/2}px;top:${e.clientY-r.top-s/2}px`;
-  b.appendChild(d);
+function goTo(href,b,e){
+  if(b){
+    const r=b.getBoundingClientRect(),s=Math.max(r.width,r.height),d=document.createElement("span");
+    d.className="rip";d.style.cssText=`width:${s}px;height:${s}px;left:${e.clientX-r.left-s/2}px;top:${e.clientY-r.top-s/2}px`;
+    b.appendChild(d);
+  }
   curtain.classList.add("go");
-  setTimeout(()=>location.href=b.getAttribute("href"),650);
+  try{sessionStorage.setItem("sl-cv",Date.now())}catch(_){}
+  setTimeout(()=>location.href=href,650);
+}
+document.querySelectorAll(".btn").forEach(b=>b.addEventListener("click",e=>{e.preventDefault();goTo(b.getAttribute("href"),b,e)}));
+document.querySelectorAll(".f-btn").forEach(a=>a.addEventListener("click",e=>{
+  if(e.ctrlKey||e.metaKey||e.shiftKey||e.button)return;
+  e.preventDefault();goTo(a.getAttribute("href"),a,e);
 }));
-addEventListener("pageshow",()=>curtain.classList.remove("go"));
+addEventListener("pageshow",()=>curtain.classList.remove("go","nt","rev"));
 
-/* chữ chạy */
-document.getElementById("mq").innerHTML=Array(8).fill("NSON · ES3 · RMMZ · SAVE · ").join("");
+/* chữ chạy ở dưới — bao quát nhiều từ khoá hơn, lặp đủ để không hụt vệt khi màn rộng */
+(function(){
+  const words=["NSON","ES3","RMMZ","RPG MAKER MV","RUBY MARSHAL","OBFUSKIT","LUA","JAVASCRIPT","SAVE EDITOR","GAME DATA"];
+  const one=words.join(" · ")+" · ";
+  document.getElementById("mq").innerHTML=one.repeat(10);
+})();
 
-/* ===== Canvas: hạt + tia nối + sao băng ===== */
+/* ===== Canvas: hạt + tia nối + cánh hoa anh đào rơi ===== */
 (function(){
   const cv=document.getElementById("fx"),ctx=cv.getContext("2d");
-  let W,H,P=[],M={x:-999,y:-999},S=[];
+  let W,H,P=[],M={x:-999,y:-999},F=[];
   function size(){W=cv.width=innerWidth;H=cv.height=innerHeight;
-    P=Array.from({length:Math.min(18,W/75|0)},()=>({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.42,vy:(Math.random()-.5)*.42,r:Math.random()*2+.6,h:Math.random()*360}))}
+    P=Array.from({length:Math.min(30,W/48|0)},()=>({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.42,vy:(Math.random()-.5)*.42,r:Math.random()*2+.6,h:Math.random()*360}))}
   size();addEventListener("resize",size);
   addEventListener("mousemove",e=>{M.x=e.clientX;M.y=e.clientY});
+  function petal(x,y,s,rot,a){
+    ctx.save();ctx.translate(x,y);ctx.rotate(rot);ctx.globalAlpha=a;
+    ctx.fillStyle="#ffb3d1";
+    ctx.beginPath();
+    ctx.moveTo(0,-s);ctx.quadraticCurveTo(s*.9,-s*.2,0,s);ctx.quadraticCurveTo(-s*.9,-s*.2,0,-s);
+    ctx.fill();ctx.restore();
+  }
   function loop(){
     ctx.clearRect(0,0,W,H);
     for(const p of P){
@@ -422,12 +446,13 @@ document.getElementById("mq").innerHTML=Array(8).fill("NSON · ES3 · RMMZ · SA
       const d=Math.hypot(P[i].x-P[j].x,P[i].y-P[j].y);
       if(d<85){ctx.strokeStyle=`rgba(120,160,255,${.18*(1-d/85)})`;ctx.beginPath();ctx.moveTo(P[i].x,P[i].y);ctx.lineTo(P[j].x,P[j].y);ctx.stroke()}
     }
-    if(Math.random()<.0015)S.push({x:Math.random()*W,y:-10,vx:-4-Math.random()*4,vy:5+Math.random()*4,l:1});
-    for(let i=S.length-1;i>=0;i--){const s=S[i];s.x+=s.vx;s.y+=s.vy;s.l-=.012;
-      const g=ctx.createLinearGradient(s.x,s.y,s.x-s.vx*9,s.y-s.vy*9);
-      g.addColorStop(0,`rgba(255,255,255,${s.l})`);g.addColorStop(1,"rgba(255,255,255,0)");
-      ctx.strokeStyle=g;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(s.x,s.y);ctx.lineTo(s.x-s.vx*9,s.y-s.vy*9);ctx.stroke();
-      if(s.l<=0)S.splice(i,1)}
+    if(Math.random()<.02&&F.length<26)F.push({x:Math.random()*W,y:-14,s:4+Math.random()*5,vy:.5+Math.random()*.6,sway:Math.random()*Math.PI*2,swaySpd:.012+Math.random()*.018,swayAmp:18+Math.random()*26,rot:Math.random()*7,rotSpd:(Math.random()-.5)*.03,l:1});
+    for(let i=F.length-1;i>=0;i--){
+      const f=F[i];f.sway+=f.swaySpd;f.y+=f.vy;f.x+=Math.sin(f.sway)*.6;f.rot+=f.rotSpd;
+      if(f.y>H+20){F.splice(i,1);continue}
+      const fade=f.y<40?f.y/40:(f.y>H-60?(H-f.y)/60:1);
+      petal(f.x+Math.sin(f.sway)*f.swayAmp*.1,f.y,f.s,f.rot,Math.max(0,Math.min(1,fade))*.9);
+    }
     if(!document.hidden)requestAnimationFrame(loop);
   }
   loop();
@@ -477,19 +502,17 @@ document.querySelectorAll(".art img").forEach(im=>{
 (function(){
   const stop=e=>e.preventDefault();
   ["selectstart","copy","cut","contextmenu","dragstart"].forEach(t=>document.addEventListener(t,stop,{capture:true}));
-  /* Ctrl/Cmd + C / X / A */
   document.addEventListener("keydown",e=>{
     if((e.ctrlKey||e.metaKey)&&["c","x","a"].includes(e.key.toLowerCase()))e.preventDefault();
   },true);
-  /* nếu có vùng đang bị chọn thì bỏ chọn ngay */
   document.addEventListener("selectionchange",()=>{const s=getSelection();if(s&&!s.isCollapsed)s.removeAllRanges()});
 })();
 
-/* ===== README dạng bong bóng: tải sẵn nền → bấm là hiện ngay ===== */
+/* ===== README dạng bong bóng: luôn lấy bản mới nhất mỗi lần mở (stale-while-revalidate) ===== */
 (function(){
   const RAW="https://raw.githubusercontent.com/MinhTruk/test/main/",GH="https://github.com/MinhTruk/test/blob/main/";
-  const btn=document.getElementById("rmBtn"),root=document.getElementById("rm"),box=document.getElementById("rmBox"),body=document.getElementById("rmBody");
-  let html=null,loading=null,last=null,closeT=0;
+  const btn=document.getElementById("rmBtn"),root=document.getElementById("rm"),box=document.getElementById("rmBox"),body=document.getElementById("rmBody"),live=document.getElementById("rmLive");
+  let cached=null,last=null,closeT=0,inflight=null;
 
   const esc=t=>t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
   const abs=(u,base)=>/^https?:\/\//i.test(u)?u:(/^[a-z][a-z0-9+.-]*:/i.test(u)||u[0]==="#"?"":base+u.replace(/^\.?\//,""));
@@ -522,19 +545,24 @@ document.querySelectorAll(".art img").forEach(im=>{
     return o.join("");
   }
 
-  function load(){
-    if(html!==null)return Promise.resolve();
-    if(loading)return loading;
-    loading=fetch(RAW+"README.md",{cache:"no-cache"}).then(r=>{if(!r.ok)throw 0;return r.text()})
-      .then(t=>{html=t.trim()?md(t):'<p class="rm-msg">README.md đang trống.</p>';body.innerHTML=html})
-      .catch(()=>{body.innerHTML='<p class="rm-msg">Không tải được README.<br><a href="'+GH+'README.md" target="_blank" rel="noopener noreferrer">Mở trên GitHub ↗</a></p>'})
-      .finally(()=>{loading=null});
-    return loading;
+  /* luôn fetch bản mới nhất (cache:'no-store' + chống cache CDN bằng query theo thời gian) */
+  function fetchFresh(){
+    return fetch(RAW+"README.md?_="+Date.now(),{cache:"no-store"}).then(r=>{if(!r.ok)throw 0;return r.text()})
+      .then(t=>{const h=t.trim()?md(t):'<p class="rm-msg">README.md đang trống.</p>';cached=h;return h});
   }
-  /* tải sẵn khi trình duyệt rảnh để lúc bấm là có nội dung ngay */
-  (window.requestIdleCallback||(f=>setTimeout(f,1200)))(load);
+  function refresh(showSpinner){
+    if(inflight)return inflight;
+    if(showSpinner&&live)live.hidden=false;
+    inflight=fetchFresh()
+      .then(h=>{if(!root.hidden)body.innerHTML=h})
+      .catch(()=>{if(!root.hidden&&cached===null)body.innerHTML='<p class="rm-msg">Không tải được README.<br><a href="'+GH+'README.md" target="_blank" rel="noopener noreferrer">Mở trên GitHub ↗</a></p>'})
+      .finally(()=>{inflight=null;if(live)live.hidden=true});
+    return inflight;
+  }
+  /* làm nóng cache khi trình duyệt rảnh, để mở lần đầu cũng nhanh */
+  (window.requestIdleCallback||(f=>setTimeout(f,1200)))(()=>refresh(false));
 
-  function open(e){
+  function open(){
     clearTimeout(closeT);
     last=document.activeElement;
     const r=btn.getBoundingClientRect();
@@ -542,10 +570,12 @@ document.querySelectorAll(".art img").forEach(im=>{
     const b=box.getBoundingClientRect();
     box.style.setProperty("--ox",Math.max(0,Math.min(b.width,r.left+r.width/2-b.left))+"px");
     box.style.setProperty("--oy",Math.max(0,Math.min(b.height,r.top+r.height/2-b.top))+"px");
-    if(html!==null)body.innerHTML=html;else{body.innerHTML='<p class="rm-msg">Đang tải…</p>';load()}
+    body.innerHTML=cached!==null?cached:'<p class="rm-msg">Đang tải…</p>';
     body.scrollTop=0;
     document.documentElement.style.overflow="hidden";
     box.focus({preventScroll:true});
+    /* mỗi lần mở đều hỏi lại GitHub để chắc chắn luôn thấy bản mới nhất */
+    refresh(true);
   }
   function close(){
     if(root.hidden||root.classList.contains("closing"))return;
@@ -558,13 +588,15 @@ document.querySelectorAll(".art img").forEach(im=>{
   document.addEventListener("keydown",e=>{
     if(root.hidden)return;
     if(e.key==="Escape"){close();return}
-    if(e.key==="Tab"){ /* giữ focus trong cửa sổ */
+    if(e.key==="Tab"){
       const f=[...box.querySelectorAll("a[href],button")].filter(x=>x.offsetParent);
       if(!f.length)return;const a=f[0],z=f[f.length-1];
       if(e.shiftKey&&(document.activeElement===a||document.activeElement===box)){e.preventDefault();z.focus()}
       else if(!e.shiftKey&&document.activeElement===z){e.preventDefault();a.focus()}
     }
   });
+  /* mở lại trang (quay lại tab) → làm mới cache ngầm, không làm phiền nếu đang đóng */
+  document.addEventListener("visibilitychange",()=>{if(!document.hidden)refresh(false)});
 })();
 </script>
 </body>
