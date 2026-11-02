@@ -174,10 +174,10 @@ SAVE-LAB/
 ├── savelab_rmmz.html
 ├── tool3.html
 ├── tool4.html
-├── obf.html
+├── tool5.html
 │
-├── tos.html
-├── privacy.html
+├── terms-of-service.html
+├── privacy-policy.html
 │
 └── README.md
 ```
@@ -189,7 +189,7 @@ SAVE-LAB/
 | `savelab_rmmz.html` | RMMZ Decrypter |
 | `tool3.html` | RPG Maker Save Editor |
 | `tool4.html` | Ruby Marshal Inspector |
-| `obf.html` | OBF – Code Obfuscator |
+| `tool5.html` | OBF – Code Obfuscator |
 | `tos.html` | Điều khoản sử dụng |
 | `privacy.html` | Chính sách quyền riêng tư |
 | `README.md` | Tài liệu dự án |
@@ -211,8 +211,8 @@ Các nguyên tắc của dự án:
 Không nên mặc định rằng tất cả công cụ đều hoạt động hoàn toàn offline. Cách xử lý dữ liệu có thể phụ thuộc vào từng tiện ích và thư viện được sử dụng.
 
 Tìm hiểu thêm:
-- [Chính sách quyền riêng tư](privacy.html)
-- [Điều khoản sử dụng](tos.html)
+- [Chính sách quyền riêng tư](privacy-policy.html)
+- [Điều khoản sử dụng](terms-of-service.html)
 
 ---
 
@@ -237,11 +237,6 @@ Người dùng chịu trách nhiệm đối với các thao tác được thực
 | Hạng mục | Trạng thái |
 |---|:---:|
 | Xây dựng giao diện trang chủ | ✅ Hoàn thành |
-| NSON / ES3 Decrypter | ✅ Đã có |
-| RMMZ Decrypter | ✅ Đã có |
-| RPG Maker Save Editor | ✅ Đã có |
-| Ruby Marshal Inspector | ✅ Đã có |
-| OBF – Code Obfuscator | ✅ Đã có |
 | Điều khoản sử dụng | ✅ Hoàn thành |
 | Chính sách quyền riêng tư | ✅ Hoàn thành |
 | Bổ sung công cụ mới | ⏳ Dự kiến |
@@ -265,7 +260,7 @@ Nếu phát hiện lỗi hoặc muốn đề xuất tính năng mới:
 
 Repository:
 
-https://github.com/MinhTruk/bakhi
+https://github.com/MinhTruk/test
 
 ---
 
