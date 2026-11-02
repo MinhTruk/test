@@ -93,7 +93,7 @@ h1 span{display:inline-block;opacity:0;transform:translateY(-55%) rotateX(45deg)
 
 footer{margin-top:70px;text-align:center;color:var(--mut);font-size:.9rem}
 .marquee{overflow:hidden;white-space:nowrap;margin-top:40px;}
-.marquee div{display:inline-block;animation:mq 46s linear infinite;font-size:clamp(1.6rem,5vw,3rem);font-weight:900;color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.35)}
+.marquee div{display:inline-block;will-change:transform;animation:mq 95s linear infinite;font-size:clamp(1.6rem,5vw,3rem);font-weight:900;color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.35)}
 @keyframes mq{to{transform:translateX(-50%)}}
 
 /* page transition */
@@ -217,6 +217,28 @@ img{pointer-events:none;-webkit-touch-callout:none}
 .rm-body blockquote{margin:.8em 0;padding:.2em 14px;border-left:3px solid var(--vi);color:#b9c0ea}
 .rm-body hr{border:0;height:1px;background:rgba(255,255,255,.14);margin:1.2em 0}
 .rm-body img{max-width:100%;height:auto;border-radius:10px}
+.rm-body h5{font-size:.95rem}.rm-body h6{font-size:.9rem;color:#b9c0ea}
+.rm-body h5,.rm-body h6{color:#fff;line-height:1.25;margin:1.1em 0 .45em}
+.rm-body h1,.rm-body h2{padding-bottom:.3em;border-bottom:1px solid rgba(255,255,255,.12)}
+.rm-al{margin:.4em 0}
+.rm-al img{display:inline-block;vertical-align:middle;margin:3px 2px}
+.rm-body img[src*="shields.io"],.rm-body img[src*="badge"]{border-radius:5px}
+.rm-body ul ul,.rm-body ol ul,.rm-body ul ol,.rm-body ol ol{margin:.2em 0 .2em 1.2em}
+.rm-ck{font-size:1.05em}
+.rm-tw{margin:.9em 0;overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:14px;border:1px solid rgba(255,255,255,.14)}
+.rm-body table{border-collapse:collapse;width:100%;font-size:.88rem;line-height:1.5}
+.rm-body th,.rm-body td{padding:9px 14px;border-bottom:1px solid rgba(255,255,255,.1);text-align:left;vertical-align:top}
+.rm-body th{color:#fff;font-weight:800;white-space:nowrap;background:linear-gradient(135deg,rgba(46,230,255,.16),rgba(138,91,255,.18))}
+.rm-body tbody tr:nth-child(even) td{background:rgba(255,255,255,.035)}
+.rm-body tbody tr:last-child td{border-bottom:0}
+.rm-body tbody tr:hover td{background:rgba(46,230,255,.07)}
+.rm-body kbd{font-family:ui-monospace,Consolas,monospace;font-size:.85em;padding:2px 6px;border-radius:6px;border:1px solid rgba(255,255,255,.25);border-bottom-width:2px;background:rgba(255,255,255,.08)}
+.rm-body del{opacity:.65}
+.rm-body details{margin:.8em 0;padding:10px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04)}
+.rm-body summary{cursor:pointer;font-weight:700;color:#fff}
+.rm-alert{border-left-width:4px}.rm-alert .rm-alt{font-weight:800;color:#fff;margin:.3em 0}
+.rm-note{border-color:#4aa3ff}.rm-tip{border-color:#3dffb0}.rm-important{border-color:#b69cff}.rm-warning{border-color:#ffc94a}.rm-caution{border-color:#ff5c7a}
+.rm-body{scroll-behavior:smooth}
 .rm-msg{text-align:center;color:var(--mut);padding:24px 0}
 .rm-msg a{display:inline-block;margin-top:10px}
 .rm-live{display:inline-flex;align-items:center;gap:6px;font-size:.68rem;color:var(--mut);font-weight:600}
@@ -418,45 +440,86 @@ addEventListener("pageshow",()=>curtain.classList.remove("go","nt","rev"));
   document.getElementById("mq").innerHTML=one.repeat(10);
 })();
 
-/* ===== Canvas: hạt + tia nối + cánh hoa anh đào rơi ===== */
+/* ===== Canvas: hạt + tia nối + cánh hoa anh đào rơi (tối ưu: dt, sprite, ngắt khi ẩn) ===== */
 (function(){
-  const cv=document.getElementById("fx"),ctx=cv.getContext("2d");
-  let W,H,P=[],M={x:-999,y:-999},F=[];
-  function size(){W=cv.width=innerWidth;H=cv.height=innerHeight;
-    P=Array.from({length:Math.min(30,W/48|0)},()=>({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.42,vy:(Math.random()-.5)*.42,r:Math.random()*2+.6,h:Math.random()*360}))}
-  size();addEventListener("resize",size);
-  addEventListener("mousemove",e=>{M.x=e.clientX;M.y=e.clientY});
-  function petal(x,y,s,rot,a){
-    ctx.save();ctx.translate(x,y);ctx.rotate(rot);ctx.globalAlpha=a;
-    ctx.fillStyle="#ffb3d1";
-    ctx.beginPath();
-    ctx.moveTo(0,-s);ctx.quadraticCurveTo(s*.9,-s*.2,0,s);ctx.quadraticCurveTo(-s*.9,-s*.2,0,-s);
-    ctx.fill();ctx.restore();
+  const cv=document.getElementById("fx"),ctx=cv.getContext("2d",{alpha:true});
+  const calm=matchMedia("(prefers-reduced-motion:reduce)").matches;
+  const REST=3000,FADE=700,MAX_FALL=46,MAX_ALL=70,LINK=80,LINK2=LINK*LINK;
+  let W=0,H=0,P=[],F=[],M={x:-999,y:-999},last=0,run=false,spawnAcc=0;
+
+  /* sprite cánh hoa vẽ sẵn 1 lần → drawImage nhanh hơn vẽ path mỗi khung */
+  const SP=48,spr=document.createElement("canvas");spr.width=spr.height=SP;
+  (function(){const c=spr.getContext("2d"),s=SP*.42,g=c.createLinearGradient(0,-s,0,s);
+    g.addColorStop(0,"#ffd3e4");g.addColorStop(1,"#ff9cc4");
+    c.translate(SP/2,SP/2);c.fillStyle=g;c.beginPath();
+    c.moveTo(0,-s);c.quadraticCurveTo(s*.9,-s*.2,0,s);c.quadraticCurveTo(-s*.9,-s*.2,0,-s);c.fill()})();
+
+  function size(){
+    W=cv.width=innerWidth;H=cv.height=innerHeight;
+    const n=calm?0:Math.min(18,Math.round(W/70));
+    P=Array.from({length:n},()=>{const h=Math.random()*360;
+      return{x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*20,vy:(Math.random()-.5)*20,r:Math.random()*1.8+.6,c:`hsl(${h|0},100%,70%)`}});
+    F.forEach(f=>{if(f.rest)f.y=H-f.s-f.off});
   }
-  function loop(){
+  size();addEventListener("resize",size,{passive:true});
+  addEventListener("mousemove",e=>{M.x=e.clientX;M.y=e.clientY},{passive:true});
+
+  function spawn(){
+    const s=4+Math.random()*5;
+    F.push({x:Math.random()*W,y:-14,s,vy:20+Math.random()*24,sway:Math.random()*6.28,swaySpd:.7+Math.random()*1,swayAmp:14+Math.random()*22,
+      rot:Math.random()*7,rotSpd:(Math.random()-.5)*1.4,off:Math.random()*10,rest:false,t0:0,a:1});
+  }
+
+  function frame(now){
+    if(!run)return;
+    const dt=Math.min(.05,(now-(last||now))/1000);last=now;
     ctx.clearRect(0,0,W,H);
+
+    /* hạt + tia nối */
+    const damp=Math.pow(.99,dt*60);
     for(const p of P){
-      const dx=M.x-p.x,dy=M.y-p.y,d=Math.hypot(dx,dy);
-      if(d<140){p.vx+=dx/d*.012;p.vy+=dy/d*.012}
-      p.vx*=.99;p.vy*=.99;p.x+=p.vx;p.y+=p.vy;
-      if(p.x<0)p.x=W;if(p.x>W)p.x=0;if(p.y<0)p.y=H;if(p.y>H)p.y=0;
-      ctx.fillStyle=`hsl(${p.h},100%,70%)`;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,7);ctx.fill();
+      const dx=M.x-p.x,dy=M.y-p.y,d2=dx*dx+dy*dy;
+      if(d2<19600&&d2>1){const d=Math.sqrt(d2),k=.7*dt*60;p.vx+=dx/d*k;p.vy+=dy/d*k}
+      p.vx*=damp;p.vy*=damp;p.x+=p.vx*dt;p.y+=p.vy*dt;
+      if(p.x<0)p.x=W;else if(p.x>W)p.x=0;if(p.y<0)p.y=H;else if(p.y>H)p.y=0;
+      ctx.fillStyle=p.c;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,6.283);ctx.fill();
     }
+    ctx.lineWidth=1;
     for(let i=0;i<P.length;i++)for(let j=i+1;j<P.length;j++){
-      const d=Math.hypot(P[i].x-P[j].x,P[i].y-P[j].y);
-      if(d<85){ctx.strokeStyle=`rgba(120,160,255,${.18*(1-d/85)})`;ctx.beginPath();ctx.moveTo(P[i].x,P[i].y);ctx.lineTo(P[j].x,P[j].y);ctx.stroke()}
+      const dx=P[i].x-P[j].x,dy=P[i].y-P[j].y,d2=dx*dx+dy*dy;
+      if(d2<LINK2){ctx.strokeStyle=`rgba(120,160,255,${(.16*(1-Math.sqrt(d2)/LINK)).toFixed(3)})`;ctx.beginPath();ctx.moveTo(P[i].x,P[i].y);ctx.lineTo(P[j].x,P[j].y);ctx.stroke()}
     }
-    if(Math.random()<.02&&F.length<26)F.push({x:Math.random()*W,y:-14,s:4+Math.random()*5,vy:.5+Math.random()*.6,sway:Math.random()*Math.PI*2,swaySpd:.012+Math.random()*.018,swayAmp:18+Math.random()*26,rot:Math.random()*7,rotSpd:(Math.random()-.5)*.03,l:1});
+
+    /* hoa anh đào: rơi → nằm lại ở đáy 3s → mờ dần rồi biến mất */
+    if(!calm){
+      let falling=0;for(const f of F)if(!f.rest)falling++;
+      spawnAcc+=dt*3.2;                       /* ~3 cánh/giây */
+      while(spawnAcc>=1){spawnAcc--;if(falling<MAX_FALL&&F.length<MAX_ALL){spawn();falling++}}
+    }
     for(let i=F.length-1;i>=0;i--){
-      const f=F[i];f.sway+=f.swaySpd;f.y+=f.vy;f.x+=Math.sin(f.sway)*.6;f.rot+=f.rotSpd;
-      if(f.y>H+20){F.splice(i,1);continue}
-      const fade=f.y<40?f.y/40:(f.y>H-60?(H-f.y)/60:1);
-      petal(f.x+Math.sin(f.sway)*f.swayAmp*.1,f.y,f.s,f.rot,Math.max(0,Math.min(1,fade))*.9);
+      const f=F[i];
+      if(!f.rest){
+        f.sway+=f.swaySpd*dt;f.y+=f.vy*dt;f.x+=Math.sin(f.sway)*f.swayAmp*dt*.9;f.rot+=f.rotSpd*dt;
+        f.a=f.y<40?Math.max(0,f.y/40):1;
+        const floor=H-f.s-f.off;
+        if(f.y>=floor){f.y=floor;f.rest=true;f.t0=now;f.rotSpd=0;f.a=1}
+      }else{
+        const t=now-f.t0;
+        if(t>REST+FADE){F.splice(i,1);continue}
+        f.a=t>REST?1-(t-REST)/FADE:1;
+      }
+      ctx.globalAlpha=f.a*.9;
+      const k=f.s/(SP*.42);                   /* tỉ lệ sprite → kích thước cánh */
+      ctx.setTransform(Math.cos(f.rot)*k,Math.sin(f.rot)*k,-Math.sin(f.rot)*k,Math.cos(f.rot)*k,f.x,f.y);
+      ctx.drawImage(spr,-SP/2,-SP/2);
     }
-    if(!document.hidden)requestAnimationFrame(loop);
+    ctx.setTransform(1,0,0,1,0,0);ctx.globalAlpha=1;
+    requestAnimationFrame(frame);
   }
-  loop();
-  document.addEventListener("visibilitychange",()=>{if(!document.hidden)loop()});
+  function start(){if(run||document.hidden)return;run=true;last=0;requestAnimationFrame(frame)}
+  function stop(){run=false}
+  document.addEventListener("visibilitychange",()=>document.hidden?stop():start());
+  start();
 })();
 
 /* ===== Năm ở footer ===== */
@@ -516,32 +579,145 @@ document.querySelectorAll(".art img").forEach(im=>{
 
   const esc=t=>t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
   const abs=(u,base)=>/^https?:\/\//i.test(u)?u:(/^[a-z][a-z0-9+.-]*:/i.test(u)||u[0]==="#"?"":base+u.replace(/^\.?\//,""));
+  const slug=s=>"rm-"+s.replace(/<[^>]*>/g,"").toLowerCase().replace(/[^\p{L}\p{N}\s-]/gu,"").replace(/\s/g,"-");
+  const attrs=s=>{const r={};s.replace(/([a-z-]+)\s*=\s*(?:&quot;(.*?)&quot;|'(.*?)')/gi,(m,k,a,b)=>{r[k.toLowerCase()]=a!==undefined?a:b;return m});return r};
+  const dim=v=>/^\d{1,4}%?$/.test(v||"")?v:"";
+  const aOpen=u=>u[0]==="#"?`<a href="#${slug(u.slice(1)).replace(/^rm-/,"rm-")}" data-a>`:((u=abs(u,GH))?`<a href="${u}" target="_blank" rel="noopener noreferrer">`:"");
+  const IMG=(a,u)=>`<img alt="${a}" src="${u}" loading="lazy" decoding="async" referrerpolicy="no-referrer">`;
+  const TITLE="(?:\\s+(?:&quot;[^)]*?&quot;|'[^)]*?'))?";
+
   function inl(t){
+    const st=[],S=h=>"\u0001"+(st.push(h)-1)+"\u0002";
     t=esc(t);
-    t=t.replace(/`([^`]+)`/g,"<code>$1</code>");
-    t=t.replace(/!\[([^\]]*)\]\(([^)\s]+)[^)]*\)/g,(m,a,u)=>{u=abs(u,RAW);return u?`<img alt="${a}" src="${u}" loading="lazy" decoding="async" referrerpolicy="no-referrer">`:""});
-    t=t.replace(/\[([^\]]+)\]\(([^)\s]+)[^)]*\)/g,(m,a,u)=>{u=abs(u,GH);return u?`<a href="${u}" target="_blank" rel="noopener noreferrer">${a}</a>`:a});
-    t=t.replace(/\*\*([^*]+)\*\*/g,"<strong>$1</strong>").replace(/(^|[^*\w])\*([^*]+)\*/g,"$1<em>$2</em>");
-    return t;
+    t=t.replace(/`([^`]+)`/g,(m,c)=>S("<code>"+c+"</code>"));
+    t=t.replace(/&lt;!--[\s\S]*?--&gt;/g,"");
+    /* <img ...> */
+    t=t.replace(/&lt;img\b((?:(?!&gt;)[\s\S])*?)\/?&gt;/gi,(m,a)=>{
+      const o=attrs(a),u=abs(o.src||"",RAW);if(!u)return"";
+      const w=dim(o.width),h=dim(o.height);
+      return S(`<img alt="${o.alt||""}" src="${u}"${w?` width="${w}"`:""}${h?` height="${h}"`:""} loading="lazy" decoding="async" referrerpolicy="no-referrer">`)});
+    /* <a href> ... </a> */
+    const aSt=[];
+    t=t.replace(/&lt;(\/?)a\b((?:(?!&gt;)[\s\S])*?)&gt;/gi,(m,c,a)=>{
+      if(c)return S(aSt.pop()||"");
+      const o=attrs(a),op=o.href?aOpen(o.href):"";aSt.push(op?"</a>":"");return S(op)});
+    t=t.replace(/&lt;(\/?)(b|strong|i|em|u|s|del|ins|kbd|sub|sup|mark|small)&gt;/gi,(m,c,n)=>S("<"+c+n.toLowerCase()+">"));
+    t=t.replace(/&lt;br\s*\/?&gt;/gi,()=>S("<br>"));
+    t=t.replace(/&lt;\/?(?:span|font|center|p|div|picture|source|summary|details)\b(?:(?!&gt;)[\s\S])*?&gt;/gi,"");
+    /* ![alt](src) và [text](url) — kể cả [![badge](img)](url) */
+    t=t.replace(new RegExp("!\\[([^\\]]*)\\]\\(\\s*([^)\\s]+)"+TITLE+"\\s*\\)","g"),(m,a,u)=>{u=abs(u,RAW);return u?S(IMG(a,u)):""});
+    t=t.replace(new RegExp("\\[([^\\]]+)\\]\\(\\s*([^)\\s]+)"+TITLE+"\\s*\\)","g"),(m,a,u)=>{const o=aOpen(u);return o?S(o)+a+S("</a>"):a});
+    /* link trần */
+    t=t.replace(/(^|[\s(])(https?:\/\/[^\s<]+?)(?=[.,;:!?)]*(?:\s|$))/g,(m,p,u)=>p+S(`<a href="${u}" target="_blank" rel="noopener noreferrer">`)+u+S("</a>"));
+    t=t.replace(/\*\*\*(.+?)\*\*\*/g,"<strong><em>$1</em></strong>")
+       .replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>")
+       .replace(/(^|[^\w])__(.+?)__(?=[^\w]|$)/g,"$1<strong>$2</strong>")
+       .replace(/~~(.+?)~~/g,"<del>$1</del>")
+       .replace(/(^|[^*\w])\*(?!\s)([^*]+?)\*(?!\w)/g,"$1<em>$2</em>")
+       .replace(/(^|[^\w])_(?!\s)([^_]+?)_(?=[^\w]|$)/g,"$1<em>$2</em>");
+    let n=0;while(/\u0001\d+\u0002/.test(t)&&n++<5)t=t.replace(/\u0001(\d+)\u0002/g,(m,i)=>st[i]);
+    return t.replace(/\n/g,"<br>");
   }
-  function md(src){
-    const L=src.replace(/\r\n?/g,"\n").split("\n"),o=[];let i=0;
-    while(i<L.length){
-      const l=L[i];
-      if(/^\s*```/.test(l)){const b=[];i++;while(i<L.length&&!/^\s*```/.test(L[i]))b.push(L[i++]);i++;o.push("<pre><code>"+esc(b.join("\n"))+"</code></pre>");continue}
-      let m;
-      if((m=l.match(/^(#{1,4})\s+(.*)$/))){o.push(`<h${m[1].length}>${inl(m[2])}</h${m[1].length}>`);i++;continue}
-      if(/^\s*([-*_])(\s*\1){2,}\s*$/.test(l)){o.push("<hr>");i++;continue}
-      if(/^\s*>/.test(l)){const b=[];while(i<L.length&&/^\s*>/.test(L[i]))b.push(L[i++].replace(/^\s*>\s?/,""));o.push("<blockquote>"+inl(b.join(" "))+"</blockquote>");continue}
-      if(/^\s*([-*+]|\d+\.)\s+/.test(l)){
-        const ord=/^\s*\d+\./.test(l),b=[];
-        while(i<L.length&&/^\s*([-*+]|\d+\.)\s+/.test(L[i]))b.push("<li>"+inl(L[i++].replace(/^\s*([-*+]|\d+\.)\s+/,""))+"</li>");
-        o.push((ord?"<ol>":"<ul>")+b.join("")+(ord?"</ol>":"</ul>"));continue}
-      if(!l.trim()){i++;continue}
-      const b=[];
-      while(i<L.length&&L[i].trim()&&!/^(\s*```|#{1,4}\s|\s*>|\s*([-*+]|\d+\.)\s+)/.test(L[i]))b.push(L[i++]);
-      o.push("<p>"+inl(b.join(" "))+"</p>");
+
+  const LI=/^(\s*)([-*+]|\d{1,9}[.)])\s+(.*)$/,
+        WR=/^\s*<(\/?)(p|div|center|details)\b([^>]*)>\s*$/i,
+        SUM=/^\s*<summary[^>]*>(.*)<\/summary>\s*$/i,
+        HH=/^\s*<h([1-6])\b([^>]*)>(.*?)<\/h\1>\s*$/i,
+        HR=/^\s*([-*_])(\s*\1){2,}\s*$/,
+        DELIM=/^\s*\|?\s*:?-+:?\s*(\|\s*:?-+:?\s*)*\|?\s*$/,
+        FENCE=/^\s*```/;
+  /* tách các thẻ <p align>, <div>, <center>, <details> ra dòng riêng (bỏ qua code) */
+  function norm(L){
+    const o=[];let f=false;
+    for(const l of L){
+      if(FENCE.test(l)){f=!f;o.push(l);continue}
+      if(f||l.indexOf("`")>-1||!/<\/?(p|div|center|details)\b/i.test(l)){o.push(l);continue}
+      l.replace(/(<\/?(?:p|div|center|details)\b[^>]*>)/gi,"\n$1\n").split("\n").forEach(x=>{if(x.trim())o.push(x)});
     }
+    return o;
+  }
+  function cells(l){
+    l=l.trim().replace(/^\|/,"").replace(/\|$/,"");
+    const c=[];let cur="",tk=false;
+    for(let k=0;k<l.length;k++){const ch=l[k];
+      if(ch==="\\"&&l[k+1]==="|"){cur+="|";k++;continue}
+      if(ch==="`")tk=!tk;
+      if(ch==="|"&&!tk){c.push(cur.trim());cur=""}else cur+=ch}
+    c.push(cur.trim());return c;
+  }
+  function md(src,sub){
+    let L=src.replace(/\r\n?/g,"\n").replace(/\t/g,"    ").replace(/<!--[\s\S]*?-->/g,"").split("\n");
+    if(!sub)L=norm(L);
+    const o=[],stack=[];let i=0;
+    const isTable=k=>k+1<L.length&&L[k].includes("|")&&DELIM.test(L[k+1])&&L[k+1].includes("-");
+    const isBlock=k=>{const l=L[k];return FENCE.test(l)||WR.test(l)||SUM.test(l)||HH.test(l)||/^#{1,6}\s/.test(l)||HR.test(l)||/^\s*>/.test(l)||LI.test(l)||isTable(k)};
+    const head=(n,txt,al)=>{const h=inl(txt.replace(/\s+#+\s*$/,""));return `<h${n} id="${slug(txt)}"${al?` style="text-align:${al}"`:""}>${h}</h${n}>`};
+
+    function list(ind){
+      const first=L[i].match(LI),ord=/^\d/.test(first[2]),tag=ord?"ol":"ul";let h="";
+      while(i<L.length){
+        let m=L[i].match(LI);
+        if(!m){ /* bỏ dòng trống giữa các mục cùng cấp */
+          let k=i;while(k<L.length&&!L[k].trim())k++;
+          const mm=k>i&&k<L.length&&L[k].match(LI);
+          if(mm&&mm[1].length===ind){i=k;continue}
+          break}
+        if(m[1].length!==ind)break;
+        let txt=m[3],sub="";i++;
+        for(;;){
+          if(i>=L.length)break;
+          if(!L[i].trim()){let k=i;while(k<L.length&&!L[k].trim())k++;const mm=k<L.length&&L[k].match(LI);if(mm&&mm[1].length>ind){i=k;continue}break}
+          const mm=L[i].match(LI);
+          if(mm&&mm[1].length>ind){sub+=list(mm[1].length);continue}
+          if(mm)break;
+          if(/^\s{2,}\S/.test(L[i])&&!isBlock(i)){txt+=" "+L[i].trim();i++;continue}
+          break}
+        let box="";
+        txt=txt.replace(/^\[( |x|X)\]\s+/,(q,c)=>{box=`<span class="rm-ck">${c===" "?"☐":"☑"}</span> `;return""});
+        h+="<li>"+box+inl(txt)+sub+"</li>";
+      }
+      return `<${tag}>${h}</${tag}>`;
+    }
+
+    while(i<L.length){
+      const l=L[i];let m;
+      if(!l.trim()){i++;continue}
+      if(FENCE.test(l)){const b=[];i++;while(i<L.length&&!FENCE.test(L[i]))b.push(L[i++]);i++;o.push("<pre><code>"+esc(b.join("\n"))+"</code></pre>");continue}
+      if((m=l.match(WR))){
+        const tg=m[2].toLowerCase(),kind=tg==="details"?"details":"div";
+        if(m[1]){const k=stack.map(s=>s.kind).lastIndexOf(kind);if(k>-1){while(stack.length>k)o.push(stack.pop().close)}}
+        else{
+          const a=tg==="center"?"center":((m[3].match(/align\s*=\s*["']?(center|left|right)/i)||[])[1]||"").toLowerCase();
+          o.push(kind==="details"?"<details>":`<div class="rm-al"${a?` style="text-align:${a}"`:""}>`);
+          stack.push({kind,close:kind==="details"?"</details>":"</div>"});
+        }
+        i++;continue}
+      if((m=l.match(SUM))){o.push("<summary>"+inl(m[1])+"</summary>");i++;continue}
+      if((m=l.match(HH))){const al=((m[2].match(/align\s*=\s*["']?(center|left|right)/i)||[])[1]||"").toLowerCase();o.push(head(+m[1],m[3].replace(/<[^>]+>/g,""),al));i++;continue}
+      if((m=l.match(/^(#{1,6})\s+(.*)$/))){o.push(head(m[1].length,m[2]));i++;continue}
+      if(HR.test(l)){o.push("<hr>");i++;continue}
+      if(isTable(i)){
+        const hd=cells(l),al=cells(L[i+1]).map(c=>/^:-+:$/.test(c)?"center":/-:$/.test(c)?"right":/^:/.test(c)?"left":"");
+        i+=2;const rows=[];
+        while(i<L.length&&L[i].trim()&&L[i].includes("|")&&!FENCE.test(L[i]))rows.push(cells(L[i++]));
+        const st=k=>al[k]?` style="text-align:${al[k]}"`:"";
+        o.push('<div class="rm-tw"><table><thead><tr>'+hd.map((c,k)=>`<th${st(k)}>${inl(c)}</th>`).join("")+"</tr></thead><tbody>"+
+          rows.map(r=>"<tr>"+hd.map((_,k)=>`<td${st(k)}>${inl(r[k]||"")}</td>`).join("")+"</tr>").join("")+"</tbody></table></div>");
+        continue}
+      if(/^\s*>/.test(l)){
+        const b=[];while(i<L.length&&/^\s*>/.test(L[i]))b.push(L[i++].replace(/^\s*>\s?/,""));
+        let cls="",lab="";const am=(b[0]||"").match(/^\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*$/i);
+        if(am){cls=" class=\"rm-alert rm-"+am[1].toLowerCase()+"\"";lab="<p class=\"rm-alt\">"+({note:"ℹ️ Note",tip:"💡 Tip",important:"❗ Important",warning:"⚠️ Warning",caution:"🛑 Caution"})[am[1].toLowerCase()]+"</p>";b.shift()}
+        o.push("<blockquote"+cls+">"+lab+md(b.join("\n"),true)+"</blockquote>");continue}
+      if(LI.test(l)){o.push(list(l.match(LI)[1].length));continue}
+      const b=[];
+      while(i<L.length&&L[i].trim()&&(b.length===0||!isBlock(i))){
+        const x=L[i++];const hard=/( {2,}|\\)$/.test(x);
+        b.push(x.replace(/\\$/,"").trim()+(hard?"\n":" "));
+      }
+      o.push("<p>"+inl(b.join("").replace(/ $/,"")).replace(/<br> /g,"<br>")+"</p>");
+    }
+    while(stack.length)o.push(stack.pop().close);
     return o.join("");
   }
 
@@ -583,6 +759,9 @@ document.querySelectorAll(".art img").forEach(im=>{
     closeT=setTimeout(()=>{root.hidden=true;root.classList.remove("closing");document.documentElement.style.overflow="";
       if(last&&last.focus)last.focus({preventScroll:true})},matchMedia("(prefers-reduced-motion:reduce)").matches?0:200);
   }
+  /* link nội bộ (#mục) cuộn ngay trong cửa sổ README */
+  body.addEventListener("click",e=>{const a=e.target.closest("a[data-a]");if(!a)return;e.preventDefault();
+    try{const id=decodeURIComponent(a.getAttribute("href").slice(1)).replace(/["\\]/g,"");const t=body.querySelector('[id="'+id+'"]');if(t)t.scrollIntoView({behavior:"smooth",block:"start"})}catch(_){}});
   btn.addEventListener("click",e=>{if(e.ctrlKey||e.metaKey||e.shiftKey||e.button)return;e.preventDefault();open()});
   root.addEventListener("click",e=>{if(e.target.closest("[data-close]"))close()});
   document.addEventListener("keydown",e=>{
